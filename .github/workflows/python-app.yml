@@ -1,0 +1,41 @@
+name: Fetch XBURN Stats
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  fetch-stats:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install web3 requests
+
+      - name: Run fetch_stats.py
+        env:
+          RPC_URL: ${{ secrets.RPC_URL }}
+          ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
+        run: python fetch_stats.py
+
+      - name: Commit stats.json if updated
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add stats.json
+          if ! git diff-index --quiet HEAD; then
+             git commit -m "Update stats.json"
+             git push
+          else
+             echo "No changes to commit."
+          fi 
