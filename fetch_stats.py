@@ -25,26 +25,41 @@ def fetch_all_pairs(token_address: str) -> List[Dict[str, Any]]:
     """Fetch all liquidity pairs for a token using DexScreener API"""
     try:
         print(f"Fetching all pairs for token {token_address}")
-        url = f"https://api.dexscreener.com/latest/dex/tokens/{token_address}"
-        response = requests.get(url)
-        if response.status_code == 200:
-            data = response.json()
-            if not data or 'pairs' not in data:
-                print("No pairs data returned from DexScreener")
-                return []
-            # Filter only Base chain pairs
-            pairs = data.get('pairs', [])
-            if not pairs:
-                print("No pairs found for token")
-                return []
-            base_pairs = [pair for pair in pairs if pair.get('chainId') == 'base']
-            print(f"Found {len(base_pairs)} pairs on Base chain")
-            return base_pairs
-        else:
-            print(f"Failed to fetch pairs. Status code: {response.status_code}")
-            return []
+        # Add delay to respect rate limits
+        time.sleep(1)
+        
+        # Try both with and without chain ID
+        urls = [
+            f"https://api.dexscreener.com/latest/dex/tokens/{token_address}",
+            f"https://api.dexscreener.com/latest/dex/tokens/base/{token_address}"
+        ]
+        
+        for url in urls:
+            try:
+                response = requests.get(url, timeout=10)
+                if response.status_code == 200:
+                    data = response.json()
+                    if not data or 'pairs' not in data:
+                        print(f"No pairs data returned from DexScreener for URL: {url}")
+                        continue
+                        
+                    pairs = data.get('pairs', [])
+                    if not pairs:
+                        print(f"No pairs found for token using URL: {url}")
+                        continue
+                        
+                    base_pairs = [pair for pair in pairs if pair.get('chainId') == 'base']
+                    if base_pairs:
+                        print(f"Found {len(base_pairs)} pairs on Base chain")
+                        return base_pairs
+            except requests.exceptions.RequestException as e:
+                print(f"Error fetching from {url}:", e)
+                continue
+                
+        print("No pairs found after trying all URLs")
+        return []
     except Exception as e:
-        print(f"Error fetching pairs for {token_address}:", e)
+        print(f"Error in fetch_all_pairs for {token_address}:", e)
         return []
 
 def get_pool_stats(pair_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -79,12 +94,17 @@ def get_historical_events(w3: Web3, contract: Any, event_name: str, from_block: 
             # Get the event object
             event = getattr(contract.events, event_name)
             
+            # Get event signature
+            event_abi = next(abi for abi in contract.abi if abi.get('type') == 'event' and abi.get('name') == event_name)
+            event_signature = f"{event_name}({','.join(input['type'] for input in event_abi['inputs'])})"
+            event_signature_hash = w3.keccak(text=event_signature).hex()
+            
             # Use the getLogs method directly
             events = w3.eth.get_logs({
                 'address': contract.address,
                 'fromBlock': from_block,
                 'toBlock': to_block,
-                'topics': [event.event_signature_hash]
+                'topics': [event_signature_hash]
             })
             
             # Process the events
