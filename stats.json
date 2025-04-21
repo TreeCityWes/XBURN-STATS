@@ -1,1 +1,40 @@
-
+{
+    "timestamp": "2025-04-21T16:45:04.980010",
+    "globalStats": {
+        "currentAMP": "2397",
+        "daysSinceLaunch": "0",
+        "totalBurnedXEN": "23459207388406339525012615262317",
+        "totalMintedXBURN": "19067354334775323396205816",
+        "ampDecayDaysLeft": "2396"
+    },
+    "accumulationProgress": {
+        "pendingXenForSwap": "263187759882121814858104797",
+        "swapThreshold": "500000000000000000000000000",
+        "progressPercentage": "5263"
+    },
+    "liquidityPair": {
+        "address": "0x93e39bd6854D960a0C4F5b592381bB8356a2D725",
+        "isValid": true,
+        "poolStats": {
+            "price_usd": "0.0003417",
+            "liquidity_usd": 803.34,
+            "volume_24h": 5862.8,
+            "price_change_24h": -4.62,
+            "txns_24h": {
+                "buys": 375,
+                "sells": 373
+            }
+        }
+    },
+    "nftStats": {
+        "totalMinted": "85",
+        "contractAddress": "0x305C60D2fEf49FADfEe67EC530DE98f67bac861D"
+    },
+    "supplyStats": {
+        "totalSupply": "0",
+        "burnedSupply": "4285473889082811279651443",
+        "circulatingSupply": "-4285473889082811279651443"
+    },
+    "holderStats": {},
+    "lastUpdated": 1745253903
+}
