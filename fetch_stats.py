@@ -28,36 +28,39 @@ def fetch_all_pairs(token_address: str) -> List[Dict[str, Any]]:
         # Add delay to respect rate limits
         time.sleep(1)
         
-        # Try both with and without chain ID
-        urls = [
-            f"https://api.dexscreener.com/latest/dex/tokens/{token_address}",
-            f"https://api.dexscreener.com/latest/dex/tokens/base/{token_address}"
-        ]
+        # Use the token-pairs endpoint with the correct chain ID format
+        url = f"https://api.dexscreener.com/latest/dex/tokens/base/{token_address}"
         
-        for url in urls:
-            try:
-                response = requests.get(url, timeout=10)
-                if response.status_code == 200:
-                    data = response.json()
-                    if not data or 'pairs' not in data:
-                        print(f"No pairs data returned from DexScreener for URL: {url}")
-                        continue
-                        
-                    pairs = data.get('pairs', [])
-                    if not pairs:
-                        print(f"No pairs found for token using URL: {url}")
-                        continue
-                        
-                    base_pairs = [pair for pair in pairs if pair.get('chainId') == 'base']
-                    if base_pairs:
-                        print(f"Found {len(base_pairs)} pairs on Base chain")
-                        return base_pairs
-            except requests.exceptions.RequestException as e:
-                print(f"Error fetching from {url}:", e)
-                continue
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        
+        response = requests.get(url, headers=headers, timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            if not data or 'pairs' not in data:
+                print("No pairs data returned from DexScreener")
+                return []
                 
-        print("No pairs found after trying all URLs")
-        return []
+            pairs = data.get('pairs', [])
+            if not pairs:
+                print("No pairs found for token")
+                return []
+                
+            # Filter only Base chain pairs (although they should all be Base chain already)
+            base_pairs = [pair for pair in pairs if pair.get('chainId') == 'base']
+            if base_pairs:
+                print(f"Found {len(base_pairs)} pairs on Base chain")
+                return base_pairs
+            else:
+                print("No Base chain pairs found in response")
+                return []
+        else:
+            print(f"Failed to fetch pairs. Status code: {response.status_code}")
+            if response.status_code == 429:  # Rate limit
+                print("Rate limited, waiting longer...")
+                time.sleep(5)
+            return []
     except Exception as e:
         print(f"Error in fetch_all_pairs for {token_address}:", e)
         return []
@@ -87,42 +90,52 @@ def get_pool_stats(pair_data: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 def get_historical_events(w3: Web3, contract: Any, event_name: str, from_block: int, to_block: int) -> List[Dict]:
-    """Fetch historical events from the contract with retry logic"""
+    """Fetch historical events from the contract with retry logic and block range chunking"""
     max_retries = 3
-    for attempt in range(max_retries):
-        try:
-            # Get the event object
-            event = getattr(contract.events, event_name)
-            
-            # Get event signature
-            event_abi = next(abi for abi in contract.abi if abi.get('type') == 'event' and abi.get('name') == event_name)
-            event_signature = f"{event_name}({','.join(input['type'] for input in event_abi['inputs'])})"
-            event_signature_hash = w3.keccak(text=event_signature).hex()
-            
-            # Use the getLogs method directly
-            events = w3.eth.get_logs({
-                'address': contract.address,
-                'fromBlock': from_block,
-                'toBlock': to_block,
-                'topics': [event_signature_hash]
-            })
-            
-            # Process the events
-            processed_events = []
-            for evt in events:
-                try:
-                    processed = event.process_log(evt)
-                    processed_events.append(processed)
-                except Exception as e:
-                    print(f"Error processing log for {event_name}:", e)
-                    continue
-            
-            return processed_events
-        except Exception as e:
-            if attempt == max_retries - 1:
-                print(f"Error fetching {event_name} events after {max_retries} attempts:", e)
-                return []
-            time.sleep(1)  # Wait before retry
+    chunk_size = 9900  # Slightly under 10k to be safe
+    all_events = []
+    
+    # Calculate number of chunks needed
+    start_block = from_block
+    while start_block <= to_block:
+        end_block = min(start_block + chunk_size, to_block)
+        
+        for attempt in range(max_retries):
+            try:
+                # Get the event object
+                event = getattr(contract.events, event_name)
+                
+                # Get event signature
+                event_abi = next(abi for abi in contract.abi if abi.get('type') == 'event' and abi.get('name') == event_name)
+                event_signature = f"{event_name}({','.join(input['type'] for input in event_abi['inputs'])})"
+                event_signature_hash = w3.keccak(text=event_signature).hex()
+                
+                # Use the getLogs method directly with chunked range
+                events = w3.eth.get_logs({
+                    'address': contract.address,
+                    'fromBlock': start_block,
+                    'toBlock': end_block,
+                    'topics': [event_signature_hash]
+                })
+                
+                # Process the events
+                for evt in events:
+                    try:
+                        processed = event.process_log(evt)
+                        all_events.append(processed)
+                    except Exception as e:
+                        print(f"Error processing log for {event_name}:", e)
+                        continue
+                
+                break  # Success, exit retry loop
+            except Exception as e:
+                if attempt == max_retries - 1:
+                    print(f"Error fetching {event_name} events for blocks {start_block}-{end_block} after {max_retries} attempts:", e)
+                time.sleep(1)  # Wait before retry
+        
+        start_block = end_block + 1
+    
+    return all_events
 
 def calculate_burn_metrics(w3: Web3, minter_contract: Any) -> Dict[str, Any]:
     """Calculate detailed burn metrics and trends with time-based analysis"""
@@ -131,8 +144,10 @@ def calculate_burn_metrics(w3: Web3, minter_contract: Any) -> Dict[str, Any]:
         day_ago_block = current_block - 28800  # Approx blocks in 24h on Base
         week_ago_block = current_block - 201600  # Approx blocks in 7 days
 
-        # Get burn events for different timeframes
+        print(f"Fetching burn events from block {day_ago_block} to {current_block} for 24h metrics")
         burns_24h = get_historical_events(w3, minter_contract, 'XENBurned', day_ago_block, current_block)
+        
+        print(f"Fetching burn events from block {week_ago_block} to {current_block} for 7d metrics")
         burns_7d = get_historical_events(w3, minter_contract, 'XENBurned', week_ago_block, current_block)
         
         # Calculate metrics for different timeframes
