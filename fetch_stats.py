@@ -25,11 +25,15 @@ def fetch_all_pairs(token_address: str) -> List[Dict[str, Any]]:
     """Fetch all liquidity pairs for a token using DexScreener API"""
     try:
         print(f"Fetching all pairs for token {token_address}")
-        url = f"https://api.dexscreener.com/latest/dex/tokens/{BASE_CHAIN_ID}/{token_address}"
+        # Use the correct endpoint format for DexScreener
+        url = f"https://api.dexscreener.com/latest/dex/tokens/{token_address}"
         response = requests.get(url)
         if response.status_code == 200:
             data = response.json()
-            return data.get('pairs', [])
+            # Filter only Base chain pairs
+            pairs = data.get('pairs', [])
+            base_pairs = [pair for pair in pairs if pair.get('chainId') == 'base']
+            return base_pairs
         else:
             print(f"Failed to fetch pairs. Status code: {response.status_code}")
     except Exception as e:
@@ -65,7 +69,10 @@ def get_historical_events(w3: Web3, contract: Any, event_name: str, from_block: 
     max_retries = 3
     for attempt in range(max_retries):
         try:
-            events = contract.events[event_name].get_logs(fromBlock=from_block, toBlock=to_block)
+            # Use the correct filter_params format for Web3.py
+            event = getattr(contract.events, event_name)
+            event_filter = event.create_filter(fromBlock=from_block, toBlock=to_block)
+            events = event_filter.get_all_entries()
             return events
         except Exception as e:
             if attempt == max_retries - 1:
