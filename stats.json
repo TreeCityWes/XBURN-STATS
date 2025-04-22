@@ -1,31 +1,31 @@
 {
-    "timestamp": "2025-04-21T23:52:53.006696",
+    "timestamp": "2025-04-22T01:46:17.480525",
     "globalStats": {
         "currentAMP": "2396",
         "daysSinceLaunch": "1",
-        "totalBurnedXEN": "26245802492195812611154965576191",
-        "totalMintedXBURN": "21339138185838397979454350",
+        "totalBurnedXEN": "28310440344729433937213582599272",
+        "totalMintedXBURN": "22978188449512180065340336",
         "ampDecayDaysLeft": "2395"
     },
     "burnMetrics": {
         "last_24h": {
-            "total_burns": 114,
-            "total_burned": "8088662448130520488729655931759",
-            "average_burn_size": "70953179369565969199382946769",
-            "unique_burners": 27,
+            "total_burns": 148,
+            "total_burned": "10139211691519141814788272954840",
+            "average_burn_size": "68508187104859066316136979424",
+            "unique_burners": 28,
             "largest_burn": "1212517513198245269371073056212",
             "smallest_burn": "4000000000000000000000000"
         },
         "last_7d": {
-            "total_burns": 420,
-            "total_burned": "26245802492195812611154965576191",
-            "average_burn_size": "62490005933799553836083251371",
-            "unique_burners": 47,
+            "total_burns": 456,
+            "total_burned": "28310440344729433937213582599272",
+            "average_burn_size": "62084299001599635827222768858",
+            "unique_burners": 48,
             "largest_burn": "1391190989040451162286965300216",
             "smallest_burn": "4000000000000000000000000"
         },
-        "total_burned": "26245802492195812611154965576191",
-        "burn_rank": "421"
+        "total_burned": "28310440344729433937213582599272",
+        "burn_rank": "457"
     },
     "swapAnalytics": {
         "accumulation": {
@@ -41,15 +41,14 @@
     },
     "liquidityPools": {},
     "nftAnalytics": {
-        "total_supply": "94",
+        "total_supply": "101",
         "mints_24h": {
-            "count": 114,
+            "count": 148,
             "total_xen_locked": "0"
         },
-        "claims_24h": 101,
+        "claims_24h": 130,
         "term_days_distribution": {
-            "420": 3,
-            "0": 87,
+            "0": 118,
             "20": 1,
             "10": 4,
             "251": 1,
@@ -67,10 +66,13 @@
             "333": 1,
             "300": 1,
             "250": 1,
+            "420": 1,
             "30": 1,
-            "1": 1
+            "1": 1,
+            "3650": 4,
+            "2555": 1
         },
-        "average_term_days": 40
+        "average_term_days": 141
     },
-    "lastUpdated": 1745279571
+    "lastUpdated": 1745286375
 }
