@@ -1,31 +1,31 @@
 {
-    "timestamp": "2025-04-22T08:50:14.758118",
+    "timestamp": "2025-04-22T09:24:09.050401",
     "globalStats": {
         "currentAMP": "2396",
         "daysSinceLaunch": "1",
-        "totalBurnedXEN": "31051022611014724933281561205711",
+        "totalBurnedXEN": "31144022611014724933281561205711",
         "totalMintedXBURN": "25342677353470380424566827",
         "ampDecayDaysLeft": "2395"
     },
     "burnMetrics": {
         "last_24h": {
-            "total_burns": 133,
-            "total_burned": "7591815222608385408268945943394",
-            "average_burn_size": "57081317463220942919315383033",
-            "unique_burners": 25,
+            "total_burns": 141,
+            "total_burned": "7634815222608385408268945943394",
+            "average_burn_size": "54147625692258052540914510236",
+            "unique_burners": 26,
             "largest_burn": "600000000000000000000000000000",
             "smallest_burn": "4000000000000000000000000"
         },
         "last_7d": {
-            "total_burns": 490,
-            "total_burned": "31051022611014724933281561205711",
-            "average_burn_size": "63369433900030050884248084093",
+            "total_burns": 499,
+            "total_burned": "31144022611014724933281561205711",
+            "average_burn_size": "62412870963957364595754631674",
             "unique_burners": 51,
             "largest_burn": "1391190989040451162286965300216",
             "smallest_burn": "4000000000000000000000000"
         },
-        "total_burned": "31051022611014724933281561205711",
-        "burn_rank": "491"
+        "total_burned": "31144022611014724933281561205711",
+        "burn_rank": "500"
     },
     "swapAnalytics": {
         "accumulation": {
@@ -41,14 +41,14 @@
     },
     "liquidityPools": {},
     "nftAnalytics": {
-        "total_supply": "106",
+        "total_supply": "115",
         "mints_24h": {
-            "count": 133,
+            "count": 141,
             "total_xen_locked": "0"
         },
         "claims_24h": 112,
         "term_days_distribution": {
-            "0": 106,
+            "0": 105,
             "180": 1,
             "33": 1,
             "200": 1,
@@ -64,9 +64,17 @@
             "3650": 6,
             "2555": 1,
             "99": 1,
-            "2": 1
+            "2": 1,
+            "108": 1,
+            "116": 1,
+            "124": 2,
+            "132": 1,
+            "140": 1,
+            "150": 1,
+            "157": 1,
+            "164": 1
         },
-        "average_term_days": 214
+        "average_term_days": 210
     },
-    "lastUpdated": 1745311813
+    "lastUpdated": 1745313847
 }
