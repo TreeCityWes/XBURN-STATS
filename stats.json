@@ -1,31 +1,31 @@
 {
-    "timestamp": "2025-04-22T05:43:28.705949",
+    "timestamp": "2025-04-22T05:55:19.186617",
     "globalStats": {
         "currentAMP": "2396",
         "daysSinceLaunch": "1",
-        "totalBurnedXEN": "30614687132433420368217107458673",
-        "totalMintedXBURN": "24702966686417647231690763",
+        "totalBurnedXEN": "30685829868857143281409054797203",
+        "totalMintedXBURN": "24774109422841370144882710",
         "ampDecayDaysLeft": "2395"
     },
     "burnMetrics": {
         "last_24h": {
             "total_burns": 148,
-            "total_burned": "9422533847986104710385136124126",
-            "average_burn_size": "63665769243149356151250919757",
-            "unique_burners": 28,
+            "total_burned": "9488676584409827623577083462656",
+            "average_burn_size": "64112679624390727186331645017",
+            "unique_burners": 27,
             "largest_burn": "1212517513198245269371073056212",
             "smallest_burn": "4000000000000000000000000"
         },
         "last_7d": {
-            "total_burns": 482,
-            "total_burned": "30614687132433420368217107458673",
-            "average_burn_size": "63515948407538216531570762362",
+            "total_burns": 483,
+            "total_burned": "30685829868857143281409054797203",
+            "average_burn_size": "63531738858917480913890382602",
             "unique_burners": 51,
             "largest_burn": "1391190989040451162286965300216",
             "smallest_burn": "4000000000000000000000000"
         },
-        "total_burned": "30614687132433420368217107458673",
-        "burn_rank": "483"
+        "total_burned": "30685829868857143281409054797203",
+        "burn_rank": "484"
     },
     "swapAnalytics": {
         "accumulation": {
@@ -46,10 +46,9 @@
             "count": 148,
             "total_xen_locked": "0"
         },
-        "claims_24h": 118,
+        "claims_24h": 119,
         "term_days_distribution": {
-            "251": 1,
-            "0": 111,
+            "0": 112,
             "100": 2,
             "76": 1,
             "83": 1,
@@ -73,7 +72,7 @@
             "99": 1,
             "2": 1
         },
-        "average_term_days": 191
+        "average_term_days": 189
     },
-    "lastUpdated": 1745300607
+    "lastUpdated": 1745301317
 }
