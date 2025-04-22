@@ -1,31 +1,31 @@
 {
-    "timestamp": "2025-04-22T06:55:21.498917",
+    "timestamp": "2025-04-22T07:22:14.706558",
     "globalStats": {
         "currentAMP": "2396",
         "daysSinceLaunch": "1",
-        "totalBurnedXEN": "30844913948798329219346074558018",
-        "totalMintedXBURN": "24774109422841370144882710",
+        "totalBurnedXEN": "31001022611014724933281561205711",
+        "totalMintedXBURN": "25292677353470380424566827",
         "ampDecayDaysLeft": "2395"
     },
     "burnMetrics": {
         "last_24h": {
-            "total_burns": 140,
-            "total_burned": "9439760664351013561514103223471",
-            "average_burn_size": "67426861888221525439386451596",
+            "total_burns": 143,
+            "total_burned": "9495869326567409275449589871164",
+            "average_burn_size": "66404680605366498429717411686",
             "unique_burners": 27,
             "largest_burn": "1212517513198245269371073056212",
             "smallest_burn": "4000000000000000000000000"
         },
         "last_7d": {
-            "total_burns": 485,
-            "total_burned": "30844913948798329219346074558018",
-            "average_burn_size": "63597760719171812823393968160",
+            "total_burns": 489,
+            "total_burned": "31001022611014724933281561205711",
+            "average_burn_size": "63396774255653834219389695717",
             "unique_burners": 51,
             "largest_burn": "1391190989040451162286965300216",
             "smallest_burn": "4000000000000000000000000"
         },
-        "total_burned": "30844913948798329219346074558018",
-        "burn_rank": "486"
+        "total_burned": "31001022611014724933281561205711",
+        "burn_rank": "490"
     },
     "swapAnalytics": {
         "accumulation": {
@@ -41,15 +41,15 @@
     },
     "liquidityPools": {},
     "nftAnalytics": {
-        "total_supply": "107",
+        "total_supply": "106",
         "mints_24h": {
-            "count": 140,
+            "count": 143,
             "total_xen_locked": "0"
         },
-        "claims_24h": 116,
+        "claims_24h": 120,
         "term_days_distribution": {
-            "0": 109,
             "7": 1,
+            "0": 112,
             "10": 3,
             "180": 1,
             "33": 1,
@@ -68,7 +68,7 @@
             "99": 1,
             "2": 1
         },
-        "average_term_days": 203
+        "average_term_days": 199
     },
-    "lastUpdated": 1745304919
+    "lastUpdated": 1745306533
 }
