@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-04-22T05:23:03.107953",
+    "timestamp": "2025-04-22T05:43:28.705949",
     "globalStats": {
         "currentAMP": "2396",
         "daysSinceLaunch": "1",
@@ -9,10 +9,10 @@
     },
     "burnMetrics": {
         "last_24h": {
-            "total_burns": 150,
-            "total_burned": "9701984577562739239199818159593",
-            "average_burn_size": "64679897183751594927998787730",
-            "unique_burners": 29,
+            "total_burns": 148,
+            "total_burned": "9422533847986104710385136124126",
+            "average_burn_size": "63665769243149356151250919757",
+            "unique_burners": 28,
             "largest_burn": "1212517513198245269371073056212",
             "smallest_burn": "4000000000000000000000000"
         },
@@ -43,14 +43,13 @@
     "nftAnalytics": {
         "total_supply": "105",
         "mints_24h": {
-            "count": 150,
+            "count": 148,
             "total_xen_locked": "0"
         },
-        "claims_24h": 120,
+        "claims_24h": 118,
         "term_days_distribution": {
-            "0": 112,
-            "10": 4,
             "251": 1,
+            "0": 111,
             "100": 2,
             "76": 1,
             "83": 1,
@@ -58,6 +57,7 @@
             "97": 1,
             "104": 1,
             "7": 1,
+            "10": 3,
             "180": 1,
             "33": 1,
             "200": 1,
@@ -73,7 +73,7 @@
             "99": 1,
             "2": 1
         },
-        "average_term_days": 188
+        "average_term_days": 191
     },
-    "lastUpdated": 1745299381
+    "lastUpdated": 1745300607
 }
