@@ -1,31 +1,31 @@
 {
-    "timestamp": "2025-04-22T03:05:20.113328",
+    "timestamp": "2025-04-22T03:47:07.900758",
     "globalStats": {
         "currentAMP": "2396",
         "daysSinceLaunch": "1",
-        "totalBurnedXEN": "29156479212757631698911615029356",
-        "totalMintedXBURN": "23337032774027634064334429",
+        "totalBurnedXEN": "29344687132433420368217107458673",
+        "totalMintedXBURN": "23432966686417647231690763",
         "ampDecayDaysLeft": "2395"
     },
     "burnMetrics": {
         "last_24h": {
-            "total_burns": 158,
-            "total_burned": "10585322347177398576486305384924",
-            "average_burn_size": "66995711058084801117001932815",
+            "total_burns": 160,
+            "total_burned": "10484530266853187245791797814241",
+            "average_burn_size": "65528314167832420286198736339",
             "unique_burners": 31,
             "largest_burn": "1212517513198245269371073056212",
             "smallest_burn": "4000000000000000000000000"
         },
         "last_7d": {
-            "total_burns": 472,
-            "total_burned": "29156479212757631698911615029356",
-            "average_burn_size": "61772201721944134955321218282",
+            "total_burns": 477,
+            "total_burned": "29344687132433420368217107458673",
+            "average_burn_size": "61519260235709476662928946454",
             "unique_burners": 50,
             "largest_burn": "1391190989040451162286965300216",
             "smallest_burn": "4000000000000000000000000"
         },
-        "total_burned": "29156479212757631698911615029356",
-        "burn_rank": "473"
+        "total_burned": "29344687132433420368217107458673",
+        "burn_rank": "478"
     },
     "swapAnalytics": {
         "accumulation": {
@@ -43,12 +43,12 @@
     "nftAnalytics": {
         "total_supply": "105",
         "mints_24h": {
-            "count": 158,
+            "count": 160,
             "total_xen_locked": "0"
         },
-        "claims_24h": 135,
+        "claims_24h": 137,
         "term_days_distribution": {
-            "0": 120,
+            "0": 121,
             "20": 1,
             "10": 4,
             "251": 1,
@@ -71,9 +71,10 @@
             "1": 6,
             "3650": 6,
             "2555": 1,
-            "99": 1
+            "99": 1,
+            "2": 1
         },
-        "average_term_days": 179
+        "average_term_days": 177
     },
-    "lastUpdated": 1745291119
+    "lastUpdated": 1745293627
 }
