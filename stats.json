@@ -1,37 +1,37 @@
 {
-    "timestamp": "2025-04-22T22:55:01.884806",
+    "timestamp": "2025-04-22T23:20:43.387931",
     "globalStats": {
         "currentAMP": "2395",
         "daysSinceLaunch": "2",
-        "totalBurnedXEN": "35873951142459583109793923692534",
-        "totalMintedXBURN": "30207053616074525567601574",
+        "totalBurnedXEN": "36003951142459583109793923692534",
+        "totalMintedXBURN": "30555848822075352064723635",
         "ampDecayDaysLeft": "2394"
     },
     "burnMetrics": {
         "last_24h": {
-            "total_burns": 50,
-            "total_burned": "5029037193661253890447849134516",
-            "average_burn_size": "100580743873225077808956982690",
-            "unique_burners": 17,
+            "total_burns": 48,
+            "total_burned": "5009802197926881888430435333906",
+            "average_burn_size": "104370879123476706008967402789",
+            "unique_burners": 16,
             "largest_burn": "1000000000000000000000000000000",
             "smallest_burn": "1000000000000000000000000"
         },
         "last_7d": {
-            "total_burns": 535,
-            "total_burned": "35873951142459583109793923692534",
-            "average_burn_size": "67054114284971183382792380733",
+            "total_burns": 536,
+            "total_burned": "36003951142459583109793923692534",
+            "average_burn_size": "67171550638917132667525977038",
             "unique_burners": 54,
             "largest_burn": "1391190989040451162286965300216",
             "smallest_burn": "1000000000000000000000000"
         },
-        "total_burned": "35873951142459583109793923692534",
-        "burn_rank": "536"
+        "total_burned": "36003951142459583109793923692534",
+        "burn_rank": "537"
     },
     "swapAnalytics": {
         "accumulation": {
-            "current_pending_xen": "186112625099072090072611989",
+            "current_pending_xen": "0",
             "threshold": "500000000000000000000000000",
-            "progress_percentage": 37.22252501981442
+            "progress_percentage": 0.0
         },
         "failed_swaps_24h": {
             "count": 0,
@@ -43,12 +43,12 @@
     "nftAnalytics": {
         "total_supply": "121",
         "mints_24h": {
-            "count": 50,
+            "count": 47,
             "total_xen_locked": "0"
         },
-        "claims_24h": 36,
+        "claims_24h": 32,
         "term_days_distribution": {
-            "0": 34,
+            "0": 31,
             "108": 1,
             "116": 1,
             "124": 2,
@@ -65,7 +65,7 @@
             "10": 1,
             "5": 1
         },
-        "average_term_days": 34
+        "average_term_days": 36
     },
-    "lastUpdated": 1745362501
+    "lastUpdated": 1745364041
 }
