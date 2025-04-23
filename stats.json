@@ -1,31 +1,31 @@
 {
-    "timestamp": "2025-04-23T17:54:52.731534",
+    "timestamp": "2025-04-23T18:56:18.838708",
     "globalStats": {
         "currentAMP": "2395",
         "daysSinceLaunch": "2",
-        "totalBurnedXEN": "41357554235486740008929606088985",
-        "totalMintedXBURN": "36141376451023842858522542",
+        "totalBurnedXEN": "41736618122442137953102502062583",
+        "totalMintedXBURN": "36520440337979240802695437",
         "ampDecayDaysLeft": "2394"
     },
     "burnMetrics": {
         "last_24h": {
             "total_burns": 33,
-            "total_burned": "4634011331000450042820779677279",
-            "average_burn_size": "140424585787892425540023626584",
+            "total_burned": "5003673841579847986993675650877",
+            "average_burn_size": "151626480047874181424050777299",
             "unique_burners": 14,
             "largest_burn": "2100000000000000000000000000000",
             "smallest_burn": "1000000000000000000000000000"
         },
         "last_7d": {
-            "total_burns": 581,
-            "total_burned": "41357554235486740008929606088985",
-            "average_burn_size": "71183397995674251306247170549",
+            "total_burns": 582,
+            "total_burned": "41736618122442137953102502062583",
+            "average_burn_size": "71712402272237350434884024162",
             "unique_burners": 63,
             "largest_burn": "2100000000000000000000000000000",
             "smallest_burn": "1000000000000000000000000"
         },
-        "total_burned": "41357554235486740008929606088985",
-        "burn_rank": "582"
+        "total_burned": "41736618122442137953102502062583",
+        "burn_rank": "583"
     },
     "swapAnalytics": {
         "accumulation": {
@@ -46,14 +46,13 @@
             "count": 33,
             "total_xen_locked": "0"
         },
-        "claims_24h": 40,
+        "claims_24h": 41,
         "term_days_distribution": {
-            "30": 1,
-            "0": 30,
+            "0": 31,
             "333": 1,
             "76": 1
         },
-        "average_term_days": 13
+        "average_term_days": 12
     },
-    "lastUpdated": 1745430891
+    "lastUpdated": 1745434577
 }
