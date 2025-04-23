@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-04-23T19:18:51.030807",
+    "timestamp": "2025-04-23T19:39:35.648334",
     "globalStats": {
         "currentAMP": "2394",
         "daysSinceLaunch": "3",
@@ -46,7 +46,7 @@
             "count": 33,
             "total_xen_locked": "0"
         },
-        "claims_24h": 41,
+        "claims_24h": 40,
         "term_days_distribution": {
             "0": 31,
             "333": 1,
@@ -54,5 +54,5 @@
         },
         "average_term_days": 12
     },
-    "lastUpdated": 1745435929
+    "lastUpdated": 1745437175
 }
