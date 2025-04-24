@@ -1,37 +1,37 @@
 {
-    "timestamp": "2025-04-24T13:20:32.130945",
+    "timestamp": "2025-04-24T13:47:52.684559",
     "globalStats": {
         "currentAMP": "2394",
         "daysSinceLaunch": "3",
-        "totalBurnedXEN": "45236000316541221372096708360756",
-        "totalMintedXBURN": "39838652404094662588134890",
+        "totalBurnedXEN": "45236302557927025894477862841349",
+        "totalMintedXBURN": "39838954645480467110516044",
         "ampDecayDaysLeft": "2393"
     },
     "burnMetrics": {
         "last_24h": {
-            "total_burns": 48,
-            "total_burned": "2345009387389109267753447574592",
-            "average_burn_size": "48854362237273109744863491137",
+            "total_burns": 49,
+            "total_burned": "2334596800683437631322434366451",
+            "average_burn_size": "47644832667008931251478252376",
             "unique_burners": 7,
             "largest_burn": "600727403758611000000000000000",
             "smallest_burn": "36379568899877100899187840"
         },
         "last_7d": {
-            "total_burns": 632,
-            "total_burned": "45236000316541221372096708360756",
-            "average_burn_size": "71575949867944970525469475254",
+            "total_burns": 634,
+            "total_burned": "45236302557927025894477862841349",
+            "average_burn_size": "71350634949411712767315241074",
             "unique_burners": 65,
             "largest_burn": "2100000000000000000000000000000",
             "smallest_burn": "1000000000000000000000000"
         },
-        "total_burned": "45236000316541221372096708360756",
-        "burn_rank": "633"
+        "total_burned": "45236302557927025894477862841349",
+        "burn_rank": "635"
     },
     "swapAnalytics": {
         "accumulation": {
-            "current_pending_xen": "178197517065036432783883488",
+            "current_pending_xen": "238645794225940909014779606",
             "threshold": "500000000000000000000000000",
-            "progress_percentage": 35.63950341300728
+            "progress_percentage": 47.72915884518818
         },
         "failed_swaps_24h": {
             "count": 0,
@@ -46,11 +46,11 @@
             "count": 48,
             "total_xen_locked": "0"
         },
-        "claims_24h": 50,
+        "claims_24h": 51,
         "term_days_distribution": {
             "0": 48
         },
         "average_term_days": 0
     },
-    "lastUpdated": 1745500831
+    "lastUpdated": 1745502471
 }
