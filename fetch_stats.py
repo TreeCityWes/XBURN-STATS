@@ -273,66 +273,138 @@ def get_token_info(w3: Web3, token_address: str, abi_file: str) -> Dict[str, Any
     """Get basic token information using Web3"""
     try:
         # Load token ABI
-        with open(abi_file, "r") as f:
-            token_abi = json.load(f)
+        try:
+            with open(abi_file, "r") as f:
+                token_abi = json.load(f)
+        except FileNotFoundError:
+            # If ABI file is missing, use a basic ERC20 ABI
+            token_abi = [
+                {"constant":True,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":False,"stateMutability":"view","type":"function"},
+                {"constant":True,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":False,"stateMutability":"view","type":"function"},
+                {"constant":True,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":False,"stateMutability":"view","type":"function"},
+                {"constant":True,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":False,"stateMutability":"view","type":"function"}
+            ]
+            print(f"ABI file {abi_file} not found, using basic ERC20 ABI")
         
         token_contract = w3.eth.contract(
             address=Web3.to_checksum_address(token_address), 
             abi=token_abi
         )
         
-        # Get basic token info
-        total_supply = token_contract.functions.totalSupply().call()
+        # Prepare result dictionary
+        result = {
+            "address": token_address,
+        }
         
-        # Check if the contract has these functions before calling them
-        decimals = token_contract.functions.decimals().call() if any(f['name'] == 'decimals' for f in token_abi if f['type'] == 'function') else 18
-        symbol = token_contract.functions.symbol().call() if any(f['name'] == 'symbol' for f in token_abi if f['type'] == 'function') else "UNKNOWN"
-        name = token_contract.functions.name().call() if any(f['name'] == 'name' for f in token_abi if f['type'] == 'function') else "Unknown Token"
+        # Get basic token info - handle each function call separately
+        # Each of these could fail if the function doesn't exist in the contract
+        try:
+            result["total_supply"] = str(token_contract.functions.totalSupply().call())
+        except Exception as e:
+            print(f"Error getting total supply: {e}")
+            result["total_supply"] = "0"
+            
+        # Get decimals with fallback to 18 (standard for most ERC20 tokens)
+        try:
+            if any(f['name'] == 'decimals' for f in token_abi if f.get('type') == 'function'):
+                result["decimals"] = token_contract.functions.decimals().call()
+            else:
+                result["decimals"] = 18
+        except Exception as e:
+            print(f"Error getting decimals: {e}")
+            result["decimals"] = 18
+            
+        # Format total supply with decimals
+        try:
+            result["total_supply_formatted"] = str(int(result["total_supply"]) / (10 ** result["decimals"]))
+        except Exception:
+            result["total_supply_formatted"] = "0"
+        
+        # Try to get symbol
+        try:
+            if any(f['name'] == 'symbol' for f in token_abi if f.get('type') == 'function'):
+                result["symbol"] = token_contract.functions.symbol().call()
+            else:
+                result["symbol"] = "UNKNOWN"
+        except Exception as e:
+            print(f"Error getting symbol: {e}")
+            result["symbol"] = "UNKNOWN"
+            
+        # Try to get name
+        try:
+            if any(f['name'] == 'name' for f in token_abi if f.get('type') == 'function'):
+                result["name"] = token_contract.functions.name().call()
+            else:
+                result["name"] = "Unknown Token"
+        except Exception as e:
+            print(f"Error getting name: {e}")
+            result["name"] = "Unknown Token"
         
         # Check for owner function - common in many tokens
-        owner = None
-        if any(f['name'] == 'owner' for f in token_abi if f['type'] == 'function'):
-            owner = token_contract.functions.owner().call()
+        try:
+            if any(f['name'] == 'owner' for f in token_abi if f.get('type') == 'function'):
+                result["owner"] = token_contract.functions.owner().call()
+        except Exception:
+            # Owner function is optional, no need to log this error
+            pass
         
-        return {
-            "name": name,
-            "symbol": symbol,
-            "decimals": decimals,
-            "total_supply": str(total_supply),
-            "total_supply_formatted": str(total_supply / (10 ** decimals)),
-            "owner": owner
-        }
+        return result
     except Exception as e:
         print(f"Error getting token info for {token_address}:", e)
-        return {}
+        return {
+            "address": token_address,
+            "error": str(e),
+            "decimals": 18,
+            "total_supply": "0",
+            "total_supply_formatted": "0",
+            "symbol": "UNKNOWN",
+            "name": "Error Loading Token"
+        }
 
 def get_holders_info(token_address: str, api_key: str) -> Dict[str, Any]:
     """Get token holders information using Basescan API"""
     try:
         print(f"Fetching holders information for token {token_address}")
         
+        # If no API key is provided, return default values
+        if not api_key:
+            print("No Basescan API key provided, skipping holder information")
+            return {"total_holders": 0, "note": "API key missing"}
+        
         # Basescan API for token holder count
         url = f"https://api.basescan.org/api?module=token&action=tokenholderlist&contractaddress={token_address}&page=1&offset=1&apikey={api_key}"
         
-        response = requests.get(url, timeout=10)
-        if response.status_code == 200:
-            data = response.json()
-            if data.get('status') == '1':
-                # If we just want the count of holders
-                holder_count = int(data.get('result', [{}])[0].get('count_unique', 0))
-                
-                return {
-                    "total_holders": holder_count
-                }
+        # Try the request with a timeout
+        try:
+            response = requests.get(url, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get('status') == '1':
+                    # If we just want the count of holders
+                    holder_count = int(data.get('result', [{}])[0].get('count_unique', 0))
+                    
+                    return {
+                        "total_holders": holder_count
+                    }
+                else:
+                    error_msg = data.get('message', 'Unknown API error')
+                    print(f"API error: {error_msg}")
+                    # Return graceful failure
+                    return {"total_holders": 0, "error": error_msg}
             else:
-                print(f"API error: {data.get('message')}")
-                return {"total_holders": 0}
-        else:
-            print(f"Failed to fetch holders. Status code: {response.status_code}")
-            return {"total_holders": 0}
+                print(f"Failed to fetch holders. Status code: {response.status_code}")
+                return {"total_holders": 0, "error": f"HTTP Status {response.status_code}"}
+        except requests.Timeout:
+            print("Request to Basescan API timed out")
+            return {"total_holders": 0, "error": "API request timeout"}
+        except requests.RequestException as e:
+            print(f"Request to Basescan API failed: {e}")
+            return {"total_holders": 0, "error": str(e)}
+            
     except Exception as e:
         print(f"Error in get_holders_info for {token_address}:", e)
-        return {"total_holders": 0}
+        return {"total_holders": 0, "error": str(e)}
 
 def get_circulating_supply(w3: Web3, token_address: str, token_abi_file: str) -> Dict[str, Any]:
     """Calculate circulating supply by excluding known treasury/locked addresses"""
@@ -491,18 +563,47 @@ def main():
         print("Error: Could not connect to RPC")
         return
 
+    # Basic ERC20 ABI (create if missing)
+    basic_erc20_abi = [
+        {"constant":True,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":False,"stateMutability":"view","type":"function"},
+        {"constant":True,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":False,"stateMutability":"view","type":"function"},
+        {"constant":True,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":False,"stateMutability":"view","type":"function"},
+        {"constant":True,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":False,"stateMutability":"view","type":"function"},
+        {"constant":True,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"payable":False,"stateMutability":"view","type":"function"},
+        {"anonymous":False,"inputs":[{"indexed":True,"name":"from","type":"address"},{"indexed":True,"name":"to","type":"address"},{"indexed":False,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"}
+    ]
+    
     try:
-        # Load contract ABIs
-        with open("XBurnMinter_abi.json", "r") as f:
-            xburnminter_abi = json.load(f)
-        with open("XBurnNFT_abi.json", "r") as f:
-            nft_abi = json.load(f)
-        with open("ERC20_abi.json", "r") as f:
-            erc20_abi = json.load(f)
-        with open("CBXEN_abi.json", "r") as f:
-            cbxen_abi = json.load(f)
+        # Load mandatory contract ABIs
+        try:
+            with open("XBurnMinter_abi.json", "r") as f:
+                xburnminter_abi = json.load(f)
+            with open("XBurnNFT_abi.json", "r") as f:
+                nft_abi = json.load(f)
+        except Exception as e:
+            print(f"Error loading mandatory ABIs: {e}")
+            return
+        
+        # Load or create optional ABIs
+        try:
+            with open("ERC20_abi.json", "r") as f:
+                erc20_abi = json.load(f)
+        except FileNotFoundError:
+            print("ERC20_abi.json not found, using basic ERC20 ABI")
+            erc20_abi = basic_erc20_abi
+            # Create the file for future use
+            with open("ERC20_abi.json", "w") as f:
+                json.dump(erc20_abi, f, indent=4)
+        
+        # For CBXEN, use ERC20 ABI if file not found
+        try:
+            with open("CBXEN_abi.json", "r") as f:
+                cbxen_abi = json.load(f)
+        except FileNotFoundError:
+            print("CBXEN_abi.json not found, using ERC20 ABI as fallback")
+            cbxen_abi = erc20_abi
     except Exception as e:
-        print(f"Error loading ABIs: {e}")
+        print(f"Error handling ABIs: {e}")
         return
 
     # Initialize contracts
@@ -534,17 +635,52 @@ def main():
     
     # Get XBURN token stats
     xburn_info = get_token_info(w3, XBURN_ADDRESS, "ERC20_abi.json")
-    xburn_holders = get_holders_info(XBURN_ADDRESS, etherscan_api_key)
-    xburn_supply = get_circulating_supply(w3, XBURN_ADDRESS, "ERC20_abi.json")
-    xburn_transfers = get_transfer_analytics(w3, XBURN_ADDRESS, "ERC20_abi.json")
+    xburn_holders = {}
+    xburn_supply = {}
+    xburn_transfers = {}
     
-    # Get CBXEN token stats 
-    cbxen_stats = get_cbxen_stats(w3, CBXEN_ADDRESS, "CBXEN_abi.json")
+    # Try to get additional XBURN stats but continue if they fail
+    try:
+        xburn_holders = get_holders_info(XBURN_ADDRESS, etherscan_api_key)
+    except Exception as e:
+        print(f"Failed to get XBURN holders info: {e}")
     
-    # Get XEN token stats (for comparison)
-    xen_info = get_token_info(w3, XEN_ADDRESS, "ERC20_abi.json")
-    xen_holders = get_holders_info(XEN_ADDRESS, etherscan_api_key)
-    xen_supply = get_circulating_supply(w3, XEN_ADDRESS, "ERC20_abi.json")
+    try:
+        xburn_supply = get_circulating_supply(w3, XBURN_ADDRESS, "ERC20_abi.json")
+    except Exception as e:
+        print(f"Failed to get XBURN supply info: {e}")
+    
+    try:
+        xburn_transfers = get_transfer_analytics(w3, XBURN_ADDRESS, "ERC20_abi.json")
+    except Exception as e:
+        print(f"Failed to get XBURN transfer analytics: {e}")
+    
+    # Get CBXEN token stats - handle this gracefully if missing
+    cbxen_stats = {}
+    try:
+        cbxen_stats = get_cbxen_stats(w3, CBXEN_ADDRESS, "CBXEN_abi.json")
+    except Exception as e:
+        print(f"Failed to get CBXEN stats (this is non-critical): {e}")
+    
+    # Get XEN token stats (for comparison) - handle gracefully
+    xen_info = {}
+    xen_holders = {}
+    xen_supply = {}
+    
+    try:
+        xen_info = get_token_info(w3, XEN_ADDRESS, "ERC20_abi.json")
+    except Exception as e:
+        print(f"Failed to get XEN token info: {e}")
+    
+    try:
+        xen_holders = get_holders_info(XEN_ADDRESS, etherscan_api_key)
+    except Exception as e:
+        print(f"Failed to get XEN holders info: {e}")
+    
+    try:
+        xen_supply = get_circulating_supply(w3, XEN_ADDRESS, "ERC20_abi.json")
+    except Exception as e:
+        print(f"Failed to get XEN supply info: {e}")
     
     # Build enhanced stats object
     stats = {
