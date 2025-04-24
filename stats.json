@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-04-24T13:47:52.684559",
+    "timestamp": "2025-04-24T14:21:17.650464",
     "globalStats": {
         "currentAMP": "2394",
         "daysSinceLaunch": "3",
@@ -9,10 +9,10 @@
     },
     "burnMetrics": {
         "last_24h": {
-            "total_burns": 49,
-            "total_burned": "2334596800683437631322434366451",
-            "average_burn_size": "47644832667008931251478252376",
-            "unique_burners": 7,
+            "total_burns": 48,
+            "total_burned": "2314596800683437631322434366451",
+            "average_burn_size": "48220766680904950652550715967",
+            "unique_burners": 6,
             "largest_burn": "600727403758611000000000000000",
             "smallest_burn": "36379568899877100899187840"
         },
@@ -46,11 +46,11 @@
             "count": 48,
             "total_xen_locked": "0"
         },
-        "claims_24h": 51,
+        "claims_24h": 50,
         "term_days_distribution": {
             "0": 48
         },
         "average_term_days": 0
     },
-    "lastUpdated": 1745502471
+    "lastUpdated": 1745504475
 }
