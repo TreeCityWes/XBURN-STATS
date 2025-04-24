@@ -10,6 +10,7 @@ import time
 XBURNMINTER_ADDRESS = "0xe89AFDeFeBDba033f6e750615f0A0f1A37C78c4A"
 XEN_ADDRESS = "0x2AB0e9e4eE70FFf1fB9D67031E44F6410170d00e"  # XEN on Base
 XBURN_ADDRESS = "0x4c5d8A75F3762c1561889743964A7279A1667995"  # XBURN token
+CBXEN_ADDRESS = "0x1Bf35dEe781F776c33e2c8A3Db0EbA8b2EB538d5"  # Adding CBXEN token address
 
 # Base chain ID for APIs
 BASE_CHAIN_ID = "base"
@@ -266,6 +267,214 @@ def get_swap_analytics(w3: Web3, minter_contract: Any) -> Dict[str, Any]:
         print("Error calculating swap analytics:", e)
         return {}
 
+# NEW FUNCTIONS FOR ENHANCED STATS
+
+def get_token_info(w3: Web3, token_address: str, abi_file: str) -> Dict[str, Any]:
+    """Get basic token information using Web3"""
+    try:
+        # Load token ABI
+        with open(abi_file, "r") as f:
+            token_abi = json.load(f)
+        
+        token_contract = w3.eth.contract(
+            address=Web3.to_checksum_address(token_address), 
+            abi=token_abi
+        )
+        
+        # Get basic token info
+        total_supply = token_contract.functions.totalSupply().call()
+        
+        # Check if the contract has these functions before calling them
+        decimals = token_contract.functions.decimals().call() if any(f['name'] == 'decimals' for f in token_abi if f['type'] == 'function') else 18
+        symbol = token_contract.functions.symbol().call() if any(f['name'] == 'symbol' for f in token_abi if f['type'] == 'function') else "UNKNOWN"
+        name = token_contract.functions.name().call() if any(f['name'] == 'name' for f in token_abi if f['type'] == 'function') else "Unknown Token"
+        
+        # Check for owner function - common in many tokens
+        owner = None
+        if any(f['name'] == 'owner' for f in token_abi if f['type'] == 'function'):
+            owner = token_contract.functions.owner().call()
+        
+        return {
+            "name": name,
+            "symbol": symbol,
+            "decimals": decimals,
+            "total_supply": str(total_supply),
+            "total_supply_formatted": str(total_supply / (10 ** decimals)),
+            "owner": owner
+        }
+    except Exception as e:
+        print(f"Error getting token info for {token_address}:", e)
+        return {}
+
+def get_holders_info(token_address: str, api_key: str) -> Dict[str, Any]:
+    """Get token holders information using Basescan API"""
+    try:
+        print(f"Fetching holders information for token {token_address}")
+        
+        # Basescan API for token holder count
+        url = f"https://api.basescan.org/api?module=token&action=tokenholderlist&contractaddress={token_address}&page=1&offset=1&apikey={api_key}"
+        
+        response = requests.get(url, timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            if data.get('status') == '1':
+                # If we just want the count of holders
+                holder_count = int(data.get('result', [{}])[0].get('count_unique', 0))
+                
+                return {
+                    "total_holders": holder_count
+                }
+            else:
+                print(f"API error: {data.get('message')}")
+                return {"total_holders": 0}
+        else:
+            print(f"Failed to fetch holders. Status code: {response.status_code}")
+            return {"total_holders": 0}
+    except Exception as e:
+        print(f"Error in get_holders_info for {token_address}:", e)
+        return {"total_holders": 0}
+
+def get_circulating_supply(w3: Web3, token_address: str, token_abi_file: str) -> Dict[str, Any]:
+    """Calculate circulating supply by excluding known treasury/locked addresses"""
+    try:
+        # Load token ABI
+        with open(token_abi_file, "r") as f:
+            token_abi = json.load(f)
+        
+        token_contract = w3.eth.contract(
+            address=Web3.to_checksum_address(token_address), 
+            abi=token_abi
+        )
+        
+        # Get total supply
+        total_supply = token_contract.functions.totalSupply().call()
+        decimals = token_contract.functions.decimals().call()
+        
+        # Common addresses to exclude (team wallets, treasury, locked tokens)
+        # This should be customized based on the specific token
+        excluded_addresses = [
+            XBURNMINTER_ADDRESS,  # Minter contract often holds tokens
+            # Add other known locked addresses here
+        ]
+        
+        # Calculate excluded balance
+        excluded_balance = 0
+        for address in excluded_addresses:
+            try:
+                balance = token_contract.functions.balanceOf(Web3.to_checksum_address(address)).call()
+                excluded_balance += balance
+                print(f"Address {address} holds {balance / (10 ** decimals)} tokens")
+            except Exception as e:
+                print(f"Error getting balance for {address}:", e)
+        
+        # Calculate circulating supply
+        circulating_supply = total_supply - excluded_balance
+        
+        return {
+            "total_supply": str(total_supply),
+            "total_supply_formatted": str(total_supply / (10 ** decimals)),
+            "excluded_balance": str(excluded_balance),
+            "excluded_balance_formatted": str(excluded_balance / (10 ** decimals)),
+            "circulating_supply": str(circulating_supply),
+            "circulating_supply_formatted": str(circulating_supply / (10 ** decimals)),
+            "circulating_percentage": (circulating_supply / total_supply) * 100 if total_supply > 0 else 0
+        }
+    except Exception as e:
+        print(f"Error calculating circulating supply for {token_address}:", e)
+        return {}
+
+def get_transfer_analytics(w3: Web3, token_address: str, token_abi_file: str) -> Dict[str, Any]:
+    """Get analytics on token transfers over the past 24h and 7d"""
+    try:
+        # Load token ABI
+        with open(token_abi_file, "r") as f:
+            token_abi = json.load(f)
+        
+        token_contract = w3.eth.contract(
+            address=Web3.to_checksum_address(token_address), 
+            abi=token_abi
+        )
+        
+        current_block = w3.eth.block_number
+        day_ago_block = current_block - 28800  # Approx blocks in 24h on Base
+        week_ago_block = current_block - 201600  # Approx blocks in 7 days
+        
+        # Get Transfer events
+        transfers_24h = get_historical_events(w3, token_contract, 'Transfer', day_ago_block, current_block)
+        transfers_7d = get_historical_events(w3, token_contract, 'Transfer', week_ago_block, current_block)
+        
+        # Analyze transfers for 24h
+        unique_senders_24h = len(set(event['args']['from'] for event in transfers_24h))
+        unique_receivers_24h = len(set(event['args']['to'] for event in transfers_24h))
+        total_volume_24h = sum(int(event['args']['value']) for event in transfers_24h)
+        
+        # Analyze transfers for 7d
+        unique_senders_7d = len(set(event['args']['from'] for event in transfers_7d))
+        unique_receivers_7d = len(set(event['args']['to'] for event in transfers_7d))
+        total_volume_7d = sum(int(event['args']['value']) for event in transfers_7d)
+        
+        return {
+            "transfers_24h": {
+                "count": len(transfers_24h),
+                "unique_senders": unique_senders_24h,
+                "unique_receivers": unique_receivers_24h,
+                "total_volume": str(total_volume_24h)
+            },
+            "transfers_7d": {
+                "count": len(transfers_7d),
+                "unique_senders": unique_senders_7d,
+                "unique_receivers": unique_receivers_7d,
+                "total_volume": str(total_volume_7d)
+            }
+        }
+    except Exception as e:
+        print(f"Error calculating transfer analytics for {token_address}:", e)
+        return {}
+
+def get_cbxen_stats(w3: Web3, cbxen_address: str, cbxen_abi_file: str) -> Dict[str, Any]:
+    """Get specific stats for CBXEN token"""
+    try:
+        # First get basic token info
+        cbxen_info = get_token_info(w3, cbxen_address, cbxen_abi_file)
+        
+        # Load CBXEN ABI
+        with open(cbxen_abi_file, "r") as f:
+            cbxen_abi = json.load(f)
+        
+        cbxen_contract = w3.eth.contract(
+            address=Web3.to_checksum_address(cbxen_address), 
+            abi=cbxen_abi
+        )
+        
+        # Get CBXEN specific metrics
+        # These function calls would depend on the specific functions available in the CBXEN contract
+        # Below are example function calls that might exist - adjust based on actual contract
+        
+        # Check if specific CBXEN functions exist before calling
+        metrics = {}
+        
+        # Example: Check if there's a rate function
+        if any(f['name'] == 'getExchangeRate' for f in cbxen_abi if f['type'] == 'function'):
+            rate = cbxen_contract.functions.getExchangeRate().call()
+            metrics["exchange_rate"] = str(rate)
+        
+        # Get holders and circulating supply
+        holders_info = get_holders_info(cbxen_address, os.environ.get("ETHERSCAN_API_KEY"))
+        circulating_supply = get_circulating_supply(w3, cbxen_address, cbxen_abi_file)
+        transfer_analytics = get_transfer_analytics(w3, cbxen_address, cbxen_abi_file)
+        
+        # Combine all data
+        return {
+            "token_info": cbxen_info,
+            "metrics": metrics,
+            "holders": holders_info,
+            "supply": circulating_supply,
+            "transfers": transfer_analytics
+        }
+    except Exception as e:
+        print(f"Error getting CBXEN stats: {e}")
+        return {}
+
 def main():
     print("Starting enhanced stats collection...")
     
@@ -288,6 +497,10 @@ def main():
             xburnminter_abi = json.load(f)
         with open("XBurnNFT_abi.json", "r") as f:
             nft_abi = json.load(f)
+        with open("ERC20_abi.json", "r") as f:
+            erc20_abi = json.load(f)
+        with open("CBXEN_abi.json", "r") as f:
+            cbxen_abi = json.load(f)
     except Exception as e:
         print(f"Error loading ABIs: {e}")
         return
@@ -316,6 +529,23 @@ def main():
         "ampDecayDaysLeft": str(global_stats[4])
     }
 
+    # NEW STATS COLLECTION
+    print("Collecting token holder and supply statistics...")
+    
+    # Get XBURN token stats
+    xburn_info = get_token_info(w3, XBURN_ADDRESS, "ERC20_abi.json")
+    xburn_holders = get_holders_info(XBURN_ADDRESS, etherscan_api_key)
+    xburn_supply = get_circulating_supply(w3, XBURN_ADDRESS, "ERC20_abi.json")
+    xburn_transfers = get_transfer_analytics(w3, XBURN_ADDRESS, "ERC20_abi.json")
+    
+    # Get CBXEN token stats 
+    cbxen_stats = get_cbxen_stats(w3, CBXEN_ADDRESS, "CBXEN_abi.json")
+    
+    # Get XEN token stats (for comparison)
+    xen_info = get_token_info(w3, XEN_ADDRESS, "ERC20_abi.json")
+    xen_holders = get_holders_info(XEN_ADDRESS, etherscan_api_key)
+    xen_supply = get_circulating_supply(w3, XEN_ADDRESS, "ERC20_abi.json")
+    
     # Build enhanced stats object
     stats = {
         "timestamp": datetime.now().isoformat(),
@@ -324,6 +554,21 @@ def main():
         "swapAnalytics": swap_analytics,
         "liquidityPools": liquidity_pools,
         "nftAnalytics": nft_analytics,
+        # New stats
+        "tokenStats": {
+            "xburn": {
+                "info": xburn_info,
+                "holders": xburn_holders,
+                "supply": xburn_supply,
+                "transfers": xburn_transfers
+            },
+            "cbxen": cbxen_stats,
+            "xen": {
+                "info": xen_info,
+                "holders": xen_holders,
+                "supply": xen_supply
+            }
+        },
         "lastUpdated": w3.eth.get_block('latest').timestamp
     }
 
@@ -336,4 +581,4 @@ def main():
         print("Error saving stats:", e)
 
 if __name__ == "__main__":
-    main() 
+    main()
