@@ -1,31 +1,31 @@
 {
-    "timestamp": "2025-04-24T06:56:05.219480",
+    "timestamp": "2025-04-24T07:23:19.890203",
     "globalStats": {
         "currentAMP": "2394",
         "daysSinceLaunch": "3",
-        "totalBurnedXEN": "44470449567801696554796461411264",
+        "totalBurnedXEN": "44819069826899786987599738991261",
         "totalMintedXBURN": "38817958764397327290966506",
         "ampDecayDaysLeft": "2393"
     },
     "burnMetrics": {
         "last_24h": {
-            "total_burns": 38,
-            "total_burned": "3133895332314956545866855322279",
-            "average_burn_size": "82470929797762014364917245323",
+            "total_burns": 39,
+            "total_burned": "3137533289204944255956774106306",
+            "average_burn_size": "80449571518075493742481387341",
             "unique_burners": 11,
             "largest_burn": "1071482809147615881216768873487",
             "smallest_burn": "93421669000000000000000000"
         },
         "last_7d": {
-            "total_burns": 616,
-            "total_burned": "44470449567801696554796461411264",
-            "average_burn_size": "72192288259418338562981268524",
+            "total_burns": 617,
+            "total_burned": "44474087524691684264886380195291",
+            "average_burn_size": "72081179132401433168373387674",
             "unique_burners": 65,
             "largest_burn": "2100000000000000000000000000000",
             "smallest_burn": "1000000000000000000000000"
         },
-        "total_burned": "44470449567801696554796461411264",
-        "burn_rank": "617"
+        "total_burned": "44819069826899786987599738991261",
+        "burn_rank": "619"
     },
     "swapAnalytics": {
         "accumulation": {
@@ -41,17 +41,17 @@
     },
     "liquidityPools": {},
     "nftAnalytics": {
-        "total_supply": "119",
+        "total_supply": "121",
         "mints_24h": {
-            "count": 38,
+            "count": 40,
             "total_xen_locked": "0"
         },
         "claims_24h": 38,
         "term_days_distribution": {
-            "0": 37,
+            "0": 39,
             "76": 1
         },
-        "average_term_days": 2
+        "average_term_days": 1
     },
-    "lastUpdated": 1745477763
+    "lastUpdated": 1745479399
 }
