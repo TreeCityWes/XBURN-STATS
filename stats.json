@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-04-24T15:46:47.249510",
+    "timestamp": "2025-04-24T15:58:35.062677",
     "globalStats": {
         "currentAMP": "2394",
         "daysSinceLaunch": "3",
@@ -43,16 +43,16 @@
     "nftAnalytics": {
         "total_supply": "115",
         "mints_24h": {
-            "count": 50,
+            "count": 49,
             "total_xen_locked": "0"
         },
         "claims_24h": 55,
         "term_days_distribution": {
-            "0": 48,
+            "0": 47,
             "1": 1,
             "76": 1
         },
         "average_term_days": 1
     },
-    "lastUpdated": 1745509605
+    "lastUpdated": 1745510313
 }
