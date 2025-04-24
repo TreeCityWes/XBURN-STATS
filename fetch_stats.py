@@ -574,6 +574,37 @@ def main():
 
     # Save stats to file
     try:
+        # Check if the file exists and compare with current stats
+        current_stats = {}
+        if os.path.exists("stats.json"):
+            try:
+                with open("stats.json", "r") as infile:
+                    current_stats = json.load(infile)
+            except json.JSONDecodeError:
+                print("Existing stats.json is not valid JSON, will overwrite")
+                current_stats = {}
+            
+        # Compare the new stats with the current stats
+        # Remove timestamp and lastUpdated from comparison
+        compare_stats = stats.copy()
+        compare_current = current_stats.copy()
+        
+        if 'timestamp' in compare_stats:
+            del compare_stats['timestamp']
+        if 'lastUpdated' in compare_stats:
+            del compare_stats['lastUpdated']
+            
+        if 'timestamp' in compare_current:
+            del compare_current['timestamp']
+        if 'lastUpdated' in compare_current:
+            del compare_current['lastUpdated']
+        
+        # Compare the stats
+        if compare_current and compare_stats == compare_current:
+            print("\nNo changes detected in stats. File remains unchanged.")
+            return
+        
+        # If we get here, there are changes, so save the file
         with open("stats.json", "w") as outfile:
             json.dump(stats, outfile, indent=4)
         print("\nEnhanced stats successfully saved to stats.json")
