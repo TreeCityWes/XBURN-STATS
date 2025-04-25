@@ -1,110 +1,4 @@
-def retry_with_fallback_rpcs(func, *args, **kwargs):
-    """Retry a function with different RPC providers if it fails due to rate limiting"""
-    original_w3 = args[0]  # Assuming first arg is the Web3 instance
-    
-    # Try with original Web3 instance first
-    try:
-        return func(*args, **kwargs)
-    except Exception as e:
-        # Check if it's a rate limit error (429)
-        if '429' in str(e) or 'Too Many Requests' in str(e):
-            print(f"Rate limit detected in {func.__name__}, trying with fallback RPCs")
-            
-            # Try with fallback RPCs
-            for i, rpc_url in enumerate(FALLBACK_RPC_URLS):
-                try:
-                    # Skip if this is the same as the original RPC
-                    if original_w3.provider.endpoint_uri == rpc_url:
-                        continue
-                        
-                    print(f"Trying {func.__name__} with fallback RPC {i+1}: {rpc_url}")
-                    new_w3 = Web3(Web3.HTTPProvider(rpc_url))
-                    
-                    if not new_w3.is_connected():
-                        print(f"Could not connect to fallback RPC {rpc_url}")
-                        continue
-                        
-                    # Replace the Web3 instance in args
-                    new_args = list(args)
-                    new_args[0] = new_w3
-                    
-                    # Special handling for contract functions
-                    if 'contract' in kwargs:
-                        # Recreate the contract with the new Web3 instance
-                        original_contract = kwargs['contract']
-                        kwargs['contract'] = new_w3.eth.contract(
-                            address=original_contract.address,
-                            abi=original_contract.abi
-                        )
-                    
-                    # Try the function with the new Web3 instance
-                    result = func(*new_args, **kwargs)
-                    print(f"Successfully executed {func.__name__} with fallback RPC {rpc_url}")
-                    return result
-                except Exception as inner_e:
-                    print(f"Fallback RPC {rpc_url} also failed: {inner_e}")
-                    time.sleep(1)  # Brief pause before trying next RPC
-            
-            # If all fallbacks failed, raise the original exception
-            print(f"All fallback RPCs failed for {func.__name__}")
-            raise e
-        else:
-            # Not a rate limit error, just raise it
-            raise edef init_web3_with_fallbacks(primary_rpc_url: str) -> Web3:
-    """Initialize Web3 with fallback RPC providers if the primary fails"""
-    # Try primary RPC first
-    if primary_rpc_url:
-        try:
-            w3 = Web3(Web3.HTTPProvider(primary_rpc_url))
-            if w3.is_connected():
-                print(f"Successfully connected to primary RPC")
-                return w3
-            else:
-                print(f"Primary RPC connection failed, trying fallbacks")
-        except Exception as e:
-            print(f"Error connecting to primary RPC: {e}")
-    
-    # Try fallback RPCs
-    for i, rpc_url in enumerate(FALLBACK_RPC_URLS):
-        try:
-            print(f"Trying fallback RPC {i+1}/{len(FALLBACK_RPC_URLS)}: {rpc_url}")
-            w3 = Web3(Web3.HTTPProvider(rpc_url))
-            if w3.is_connected():
-                print(f"Successfully connected to fallback RPC: {rpc_url}")
-                return w3
-        except Exception as e:
-            print(f"Fallback RPC {rpc_url} failed: {e}")
-    
-    # If all RPCs fail, raise an exception
-    raise ConnectionError("All RPC connections failed")def create_empty_stats_file():
-    """Create an empty stats file to prevent workflow failure"""
-    try:
-        # Check if file already exists
-        if os.path.exists("stats.json"):
-            print("stats.json already exists, not overwriting with empty file")
-            return
-            
-        # Create a minimal valid stats object
-        empty_stats = {
-            "timestamp": datetime.now().isoformat(),
-            "globalStats": {
-                "error": "Failed to retrieve data due to API or RPC limitations"
-            },
-            "lastUpdated": int(time.time())
-        }
-        
-        # Write the file
-        with open("stats.json", "w") as outfile:
-            json.dump(empty_stats, outfile, indent=4)
-        print("Created minimal stats.json file to prevent workflow failure")
-    except Exception as e:
-        print(f"Error creating empty stats file: {e}")
-        # Last resort - create absolutely minimal file
-        try:
-            with open("stats.json", "w") as f:
-                f.write('{"error": "Data retrieval failed"}')
-        except:
-            passimport os
+import os
 import json
 import requests
 from web3 import Web3
@@ -113,891 +7,602 @@ from datetime import datetime, timedelta
 import time
 
 # Contract addresses
+# User confirmed XBURNMINTER_ADDRESS and XBURN_ADDRESS are the same
+# Minter functionality + XBURN ERC20 functionality expected at this address
 XBURNMINTER_ADDRESS = "0xe89AFDeFeBDba033f6e750615f0A0f1A37C78c4A"
+XBURN_ADDRESS = "0xe89AFDeFeBDba033f6e750615f0A0f1A37C78c4A" # Same as Minter
 XEN_ADDRESS = "0x2AB0e9e4eE70FFf1fB9D67031E44F6410170d00e"  # XEN on Base
-XBURN_ADDRESS = "0x4c5d8A75F3762c1561889743964A7279A1667995"  # XBURN token
-CBXEN_ADDRESS = "0x1Bf35dEe781F776c33e2c8A3Db0EbA8b2EB538d5"  # Adding CBXEN token address
+CBXEN_ADDRESS = "0xffcbF84650cE02DaFE96926B37a0ac5E34932fa5" # CBXEN token - Updated address
 
 # Base chain ID for APIs
 BASE_CHAIN_ID = "base"
 
-# Fallback RPC URLs
+# Fallback RPC URLs (Updated List)
 FALLBACK_RPC_URLS = [
     "https://base.llamarpc.com",
-    "https://1rpc.io/base",
     "https://base.meowrpc.com",
-    "https://base-mainnet.public.blastapi.io",
-    "https://api.zan.top/base-mainnet",
     "https://rpc.owlracle.info/base/70d38ce1826c4a60bb2a8e05a6c8b20f",
+    "https://endpoints.omniatech.io/v1/base/mainnet/public",
     "https://base-pokt.nodies.app",
-    "https://base.gateway.tenderly.co"
+    "https://mainnet.base.org",
+    "https://developer-access-mainnet.base.org",
+    "https://base-rpc.publicnode.com" # HTTP version
 ]
 
-# Known LP pairs
-KNOWN_LP_PAIRS = [
-    "0x93e39bd6854D960a0C4F5b592381bB8356a2D725",  # Main pair
-    "0x305C60D2fEf49FADfEe67EC530DE98f67bac861D",  # Additional pairs
-    # Add more known pairs here
+# Basic ERC20 ABI Snippet (for fallbacks)
+BASIC_ERC20_ABI_SNIPPET = [
+    {"constant":True,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":False,"stateMutability":"view","type":"function"},
+    {"constant":True,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":False,"stateMutability":"view","type":"function"}
 ]
 
-def fetch_all_pairs(token_address: str) -> List[Dict[str, Any]]:
-    """Fetch all liquidity pairs for a token using DexScreener API"""
+# --- Helper Functions ---
+
+def init_web3_with_fallbacks(primary_rpc_url: str) -> Web3:
+    """Initialize Web3 with fallback RPC providers if the primary fails"""
+    # Try primary RPC first
+    if primary_rpc_url:
+        try:
+            print(f"Trying primary RPC: {primary_rpc_url}")
+            w3 = Web3(Web3.HTTPProvider(primary_rpc_url))
+            if w3.is_connected():
+                print(f"Successfully connected to primary RPC: {primary_rpc_url}")
+                return w3
+            else:
+                print(f"Primary RPC connection failed, trying fallbacks")
+        except Exception as e:
+            print(f"Error connecting to primary RPC: {e}, trying fallbacks")
+    else:
+        print("No primary RPC_URL provided, starting with fallbacks.")
+
+    # Try fallback RPCs
+    for i, rpc_url in enumerate(FALLBACK_RPC_URLS):
+        try:
+            print(f"Trying fallback RPC {i+1}/{len(FALLBACK_RPC_URLS)}: {rpc_url}")
+            w3 = Web3(Web3.HTTPProvider(rpc_url))
+            if w3.is_connected():
+                print(f"Successfully connected to fallback RPC: {rpc_url}")
+                return w3
+            else:
+                print(f"Fallback RPC {rpc_url} failed to connect cleanly.") # Added clarity
+        except Exception as e:
+            print(f"Fallback RPC {rpc_url} failed with error: {e}")
+
+    # If all RPCs fail, raise an exception
+    raise ConnectionError("All primary and fallback RPC connections failed")
+
+def retry_with_fallback_rpcs(func, *args, **kwargs):
+    """
+    Retry a function with different RPC providers if it fails due to specific errors
+    or rate limiting. Handles contract objects passed in args or kwargs.
+    """
+    # Extract the initial Web3 instance, assuming it's the first argument
+    if not args or not isinstance(args[0], Web3):
+        raise ValueError("The first argument must be a Web3 instance.")
+    original_w3 = args[0]
+
+    # Keep track of contracts to recreate
+    contract_indices = {i: arg for i, arg in enumerate(args) if hasattr(arg, 'address') and hasattr(arg, 'abi')}
+    contract_kwargs = {k: v for k, v in kwargs.items() if hasattr(v, 'address') and hasattr(v, 'abi')}
+
+    # Try with original Web3 instance first
     try:
-        print(f"Fetching all pairs for token {token_address}")
-        # Add delay to respect rate limits - increased to 2 seconds
-        time.sleep(2)
-        
-        # Use the token-pairs endpoint with the correct chain ID format
-        url = f"https://api.dexscreener.com/latest/dex/tokens/base/{token_address}"
-        
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        }
-        
-        # Try up to 3 times with increasing backoff
-        max_retries = 3
-        for attempt in range(max_retries):
-            try:
-                response = requests.get(url, headers=headers, timeout=10)
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    if not data or 'pairs' not in data:
-                        print("No pairs data returned from DexScreener")
-                        return []
-                        
-                    pairs = data.get('pairs', [])
-                    if not pairs:
-                        print("No pairs found for token")
-                        return []
-                        
-                    # Filter only Base chain pairs (although they should all be Base chain already)
-                    base_pairs = [pair for pair in pairs if pair.get('chainId') == 'base']
-                    if base_pairs:
-                        print(f"Found {len(base_pairs)} pairs on Base chain")
-                        return base_pairs
-                    else:
-                        print("No Base chain pairs found in response")
-                        return []
-                elif response.status_code == 429:  # Rate limit
-                    wait_time = 5 * (attempt + 1)  # 5, 10, 15 seconds
-                    print(f"Rate limited by DexScreener, waiting {wait_time} seconds...")
-                    time.sleep(wait_time)
-                    continue  # Try again after waiting
-                else:
-                    print(f"Failed to fetch pairs. Status code: {response.status_code}")
-                    # Try next attempt
-                    time.sleep(2 * (attempt + 1))
-            except requests.exceptions.RequestException as e:
-                print(f"Request error in attempt {attempt+1}: {e}")
-                time.sleep(2 * (attempt + 1))
-                
-        # If we've exhausted all retries
-        print("All attempts to fetch pairs failed")
-        return []
+        return func(*args, **kwargs)
     except Exception as e:
-        print(f"Error in fetch_all_pairs for {token_address}:", e)
-        return []
+        # Define conditions for retry (rate limit, connection errors, specific node issues)
+        # Convert error to string for simpler checking
+        error_str = str(e).lower()
+        retry_conditions = [
+            '429', 'too many requests', 'connectionerror', 'connection aborted',
+            'connection pool', 'request timed out', 'timeout',
+            'header not found', 'non-existent block', # Common node sync/data issues
+            'could not transact', 'is contract deployed correctly' # Catch potential node errors manifesting as call failures
+        ]
 
-def get_pool_stats(pair_data: Dict[str, Any]) -> Dict[str, Any]:
-    """Extract comprehensive statistics from a pool's data"""
-    if not pair_data:
-        return None
-    
-    return {
-        "dex": pair_data.get('dexId'),
-        "price_usd": pair_data.get('priceUsd'),
-        "price_native": pair_data.get('priceNative'),
-        "liquidity": {
-            "usd": pair_data.get('liquidity', {}).get('usd'),
-            "base": pair_data.get('liquidity', {}).get('base'),
-            "quote": pair_data.get('liquidity', {}).get('quote')
-        },
-        "volume": pair_data.get('volume', {}),
-        "price_change": pair_data.get('priceChange', {}),
-        "txns": pair_data.get('txns', {}),
-        "fdv": pair_data.get('fdv'),
-        "market_cap": pair_data.get('marketCap'),
-        "pair_created_at": pair_data.get('pairCreatedAt'),
-        "base_token": pair_data.get('baseToken', {}),
-        "quote_token": pair_data.get('quoteToken', {})
-    }
+        should_retry = any(cond in error_str for cond in retry_conditions)
+
+        if should_retry:
+            print(f"Error detected in {func.__name__} (Type: {type(e).__name__}, Msg: {str(e)[:100]}...), trying with fallback RPCs.")
+
+            # Try with fallback RPCs
+            for i, rpc_url in enumerate(FALLBACK_RPC_URLS):
+                # Skip if this is the same as the original RPC used
+                if hasattr(original_w3, 'provider') and hasattr(original_w3.provider, 'endpoint_uri') and original_w3.provider.endpoint_uri == rpc_url:
+                    continue
+
+                try:
+                    print(f"Trying {func.__name__} with fallback RPC {i+1}: {rpc_url}")
+                    new_w3 = Web3(Web3.HTTPProvider(rpc_url))
+
+                    if not new_w3.is_connected():
+                        print(f"Could not connect to fallback RPC {rpc_url}")
+                        continue
+
+                    # Rebuild args and kwargs with the new w3 instance and recreated contracts
+                    new_args = list(args)
+                    new_args[0] = new_w3 # Replace Web3 instance
+
+                    # Recreate contracts passed positionally
+                    for index, original_contract in contract_indices.items():
+                        try:
+                            new_args[index] = new_w3.eth.contract(
+                                address=original_contract.address,
+                                abi=original_contract.abi
+                            )
+                            print(f"Recreated positional contract {original_contract.address[:10]}... for fallback.")
+                        except Exception as contract_recreate_e:
+                            print(f"Error recreating positional contract {original_contract.address[:10]}... for fallback {rpc_url}: {contract_recreate_e}")
+                            raise # Propagate error if contract cannot be recreated
+
+                    # Recreate contracts passed via kwargs
+                    current_kwargs = kwargs.copy()
+                    for key, original_contract in contract_kwargs.items():
+                         try:
+                            current_kwargs[key] = new_w3.eth.contract(
+                                address=original_contract.address,
+                                abi=original_contract.abi
+                            )
+                            print(f"Recreated kwarg contract '{key}' ({original_contract.address[:10]}...) for fallback.")
+                         except Exception as contract_recreate_e:
+                            print(f"Error recreating kwarg contract '{key}' ({original_contract.address[:10]}...) for fallback {rpc_url}: {contract_recreate_e}")
+                            raise # Propagate error if contract cannot be recreated
+
+
+                    # Try the function with the new Web3 instance and recreated contracts
+                    result = func(*new_args, **current_kwargs)
+                    print(f"Successfully executed {func.__name__} with fallback RPC {rpc_url}")
+                    return result
+                except Exception as inner_e:
+                    print(f"Fallback RPC {rpc_url} attempt for {func.__name__} failed: {inner_e}")
+                    time.sleep(1) # Brief pause before trying next RPC
+
+            # If all fallbacks failed, raise the original exception
+            print(f"All fallback RPCs failed for {func.__name__}. Raising original error.")
+            raise e
+        else:
+            # Not an error type we retry on, just raise it
+            print(f"Non-retryable error in {func.__name__}: {type(e).__name__}. Raising original.")
+            raise e
+
+def load_abi_safely(filepath, fallback_abi=None):
+    """Loads ABI from file, returns fallback ABI on error."""
+    try:
+        with open(filepath, "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"ABI file not found: {filepath}. Using fallback.")
+        return fallback_abi
+    except json.JSONDecodeError as e:
+        print(f"ERROR: Invalid JSON in ABI file {filepath}: {e}. Using fallback.")
+        return fallback_abi
+    except Exception as e:
+        print(f"ERROR: Unexpected error loading ABI file {filepath}: {e}. Using fallback.")
+        return fallback_abi
 
 def get_historical_events(w3: Web3, contract: Any, event_name: str, from_block: int, to_block: int) -> List[Dict]:
     """Fetch historical events from the contract with retry logic and block range chunking"""
     max_retries = 3
-    chunk_size = 2000  # Reduced from 9900 to avoid rate limits
+    chunk_size = 9900 # Slightly under 10k to be safe
     all_events = []
-    
-    # Calculate number of chunks needed
-    start_block = from_block
-    while start_block <= to_block:
-        end_block = min(start_block + chunk_size, to_block)
-        
-        for attempt in range(max_retries):
+
+    if not contract or not hasattr(contract, 'address') or not hasattr(contract, 'abi'):
+         print(f"Warning: Invalid contract object passed to get_historical_events for event {event_name}.")
+         return all_events # Return empty list if contract is invalid
+
+    print(f"Fetching {event_name} events for {contract.address} from block {from_block} to {to_block}...")
+
+    # --- Define the core logic as a separate function for retry ---
+    def fetch_chunk(web3_instance, contract_instance, start, end):
+        _events = []
+        # Get the event object
+        try:
+             event_filter = getattr(contract_instance.events, event_name)
+        except AttributeError:
+             print(f"ERROR: Event '{event_name}' not found in contract ABI for {contract_instance.address}.")
+             return [] # Cannot proceed without the event definition
+
+        # Get event signature for get_logs
+        try:
+            event_abi = next(abi for abi in contract_instance.abi if abi.get('type') == 'event' and abi.get('name') == event_name)
+            event_signature_hash = web3_instance.keccak(text=f"{event_name}({','.join(inp['type'] for inp in event_abi['inputs'])})").hex()
+
+            # Use get_logs for potentially better performance/reliability
+            raw_logs = web3_instance.eth.get_logs({
+                'address': contract_instance.address,
+                'fromBlock': start,
+                'toBlock': end,
+                'topics': [event_signature_hash]
+            })
+        except StopIteration:
+             print(f"ERROR: Could not find ABI definition for event '{event_name}' in contract {contract_instance.address}.")
+             return [] # Cannot proceed without ABI definition
+        except Exception as sig_e:
+             print(f"Error getting event signature/logs for {event_name} ({start}-{end}): {sig_e}. Falling back to create_filter.")
+             # Fallback to create_filter if get_logs fails unexpectedly
+             try:
+                  log_filter = event_filter.create_filter(fromBlock=start, toBlock=end)
+                  raw_logs = log_filter.get_all_entries()
+             except Exception as filter_e:
+                  print(f"Fallback create_filter also failed for {event_name} ({start}-{end}): {filter_e}")
+                  raise filter_e # Re-raise if fallback fails
+
+        # Process the events
+        processed_count = 0
+        skipped_count = 0
+        for log in raw_logs:
             try:
-                # Get the event object
-                event = getattr(contract.events, event_name)
-                
-                # Get event signature
-                try:
-                    event_abi = next(abi for abi in contract.abi if abi.get('type') == 'event' and abi.get('name') == event_name)
-                    event_signature = f"{event_name}({','.join(input['type'] for input in event_abi['inputs'])})"
-                    event_signature_hash = w3.keccak(text=event_signature).hex()
-                    
-                    # Use the getLogs method directly with chunked range
-                    events = w3.eth.get_logs({
-                        'address': contract.address,
-                        'fromBlock': start_block,
-                        'toBlock': end_block,
-                        'topics': [event_signature_hash]
-                    })
-                except Exception as e:
-                    print(f"Error getting event signature for {event_name}: {e}")
-                    # Try a simpler approach
-                    print(f"Trying simplified approach for event {event_name}")
-                    events = event.get_logs(fromBlock=start_block, toBlock=end_block)
-                
-                # Process the events
-                for evt in events:
-                    try:
-                        processed = event.process_log(evt)
-                        all_events.append(processed)
-                    except Exception as e:
-                        print(f"Error processing log for {event_name}:", e)
-                        continue
-                
-                break  # Success, exit retry loop
-            except Exception as e:
-                wait_time = 1 + attempt * 2  # Linear backoff: 1, 3, 5 seconds
-                if attempt == max_retries - 1:
-                    print(f"Error fetching {event_name} events for blocks {start_block}-{end_block} after {max_retries} attempts:", e)
-                else:
-                    print(f"Attempt {attempt+1} failed for {event_name}, retrying in {wait_time}s...")
-                time.sleep(wait_time)  # Wait before retry
-        
-        # Increment for next chunk
-        start_block = end_block + 1
-        
-        # Add a small delay between chunks to avoid rate limits
-        time.sleep(0.5)
-    
+                processed = event_filter.process_log(log)
+                # Check for unexpected None return which can cause downstream issues
+                if processed is None:
+                     # print(f"Warning: process_log returned None unexpectedly for {event_name}. Raw log: {log}") # Keep commented unless debugging needed
+                     skipped_count += 1
+                     continue
+                _events.append(processed)
+                processed_count += 1
+            except Exception: # Catch all processing errors silently
+                # print(f"Error processing log for {event_name}: {e}. Log: {log}") # Keep commented unless debugging needed
+                skipped_count += 1
+                continue
+        if skipped_count > 0:
+             print(f"Skipped {skipped_count} logs for {event_name} in chunk {start}-{end} due to processing issues.")
+        print(f"Processed {processed_count} {event_name} logs for chunk {start}-{end}.")
+        return _events
+    # --- End of core logic function ---
+
+    current_block_num = from_block
+    while current_block_num <= to_block:
+        end_block_chunk = min(current_block_num + chunk_size, to_block)
+        print(f"Querying chunk: {current_block_num} - {end_block_chunk}")
+        try:
+            # Wrap the chunk fetch attempt in the retry logic
+            chunk_events = retry_with_fallback_rpcs(fetch_chunk, w3, contract, current_block_num, end_block_chunk)
+            all_events.extend(chunk_events)
+        except Exception as e:
+            # If retries fail for a chunk, log it and move to the next
+            print(f"FATAL: Failed to fetch {event_name} events for chunk {current_block_num}-{end_block_chunk} after all retries: {e}")
+            # Optionally, break or return partial data if chunk failure is critical
+            # return all_events # Example: return what we have so far
+
+        current_block_num = end_block_chunk + 1
+        time.sleep(0.2) # Small delay between chunks
+
+    print(f"Finished fetching {event_name}. Total events processed: {len(all_events)}")
     return all_events
 
-def calculate_burn_metrics(w3: Web3, minter_contract: Any) -> Dict[str, Any]:
-    """Calculate detailed burn metrics and trends with time-based analysis"""
-    try:
-        current_block = w3.eth.block_number
-        day_ago_block = current_block - 28800  # Approx blocks in 24h on Base
-        week_ago_block = current_block - 201600  # Approx blocks in 7 days
+# --- Analysis Functions (Based on user's provided script) ---
 
-        print(f"Fetching burn events from block {day_ago_block} to {current_block} for 24h metrics")
-        burns_24h = get_historical_events(w3, minter_contract, 'XENBurned', day_ago_block, current_block)
+def calculate_burn_metrics(w3: Web3, minter_contract: Any) -> Dict[str, Any]:
+    """Calculate burn metrics from current contract state only (no historical events)"""
+    metrics = { # Initialize with default/error state
+        "total_burned": "Error",
+        "burn_rank": "Error"
+    }
+    
+    try:
+        # Wrap contract calls in simple retry wrappers 
+        def get_total_burned(web3, contract): return str(contract.functions.totalXenBurned().call())
+        def get_burn_rank(web3, contract): return str(contract.functions.globalBurnRank().call())
+
+        metrics["total_burned"] = retry_with_fallback_rpcs(get_total_burned, w3, minter_contract)
+        metrics["burn_rank"] = retry_with_fallback_rpcs(get_burn_rank, w3, minter_contract)
         
-        print(f"Fetching burn events from block {week_ago_block} to {current_block} for 7d metrics")
-        burns_7d = get_historical_events(w3, minter_contract, 'XENBurned', week_ago_block, current_block)
-        
-        # Calculate metrics for different timeframes
-        metrics_24h = analyze_burn_period(burns_24h)
-        metrics_7d = analyze_burn_period(burns_7d)
-        
-        return {
-            "last_24h": metrics_24h,
-            "last_7d": metrics_7d,
-            "total_burned": str(minter_contract.functions.totalXenBurned().call()),
-            "burn_rank": str(minter_contract.functions.globalBurnRank().call())
-        }
+        print("Retrieved current burn metrics from contract state")
     except Exception as e:
-        print("Error calculating burn metrics:", e)
-        return {}
+        print(f"Error calculating burn metrics: {e}")
+        metrics["error"] = str(e) # Add top-level error
+    return metrics
 
 def analyze_burn_period(burn_events: List[Dict]) -> Dict[str, Any]:
     """Analyze burn events for a specific time period"""
-    if not burn_events:
+    # Filter out potential None entries if process_log failed silently
+    valid_events = [event for event in burn_events if event and 'args' in event]
+    if not valid_events:
         return {
-            "total_burns": 0,
-            "total_burned": "0",
-            "average_burn_size": "0",
-            "unique_burners": 0,
-            "largest_burn": "0",
-            "smallest_burn": "0"
+            "total_burns": 0, "total_burned": "0", "average_burn_size": "0",
+            "unique_burners": 0, "largest_burn": "0", "smallest_burn": "0",
+            "error": "No valid burn events found"
         }
 
-    burn_amounts = [int(event['args']['amount']) for event in burn_events]
-    unique_burners = len(set(event['args']['user'] for event in burn_events))
-    
-    return {
-        "total_burns": len(burn_events),
-        "total_burned": str(sum(burn_amounts)),
-        "average_burn_size": str(sum(burn_amounts) // len(burn_events)) if burn_events else "0",
-        "unique_burners": unique_burners,
+    burn_amounts = []
+    burners = set()
+    processed_count = 0
+    error_count = 0
+    for event in valid_events:
+        try:
+            amount = event['args'].get('amount')
+            user = event['args'].get('user')
+            if amount is not None: # Check amount is not None before converting
+                 burn_amounts.append(int(amount))
+            if user:
+                 burners.add(user)
+            processed_count += 1
+        except (KeyError, ValueError, TypeError) as e:
+            # print(f"Error processing burn event args: {e}. Event: {event}") # Keep commented
+            error_count += 1
+            continue
+
+    total_burned_sum = sum(burn_amounts)
+    num_burns = len(burn_amounts)
+
+    result = {
+        "total_burns": processed_count, # Count successfully processed events
+        "total_burned": str(total_burned_sum),
+        "average_burn_size": str(total_burned_sum // num_burns) if num_burns > 0 else "0",
+        "unique_burners": len(burners),
         "largest_burn": str(max(burn_amounts)) if burn_amounts else "0",
         "smallest_burn": str(min(burn_amounts)) if burn_amounts else "0"
     }
+    if error_count > 0:
+        result["processing_errors"] = error_count
+    return result
 
 def get_nft_analytics(w3: Web3, nft_contract: Any) -> Dict[str, Any]:
-    """Get comprehensive NFT statistics and analytics"""
+    """Get NFT statistics from current contract state only (no historical events)"""
+    analytics = { # Default/error state
+         "total_supply": "Error"
+    }
+    
+    if not nft_contract:
+        analytics["error"] = "NFT contract object is invalid or missing."
+        return analytics
+
     try:
-        current_block = w3.eth.block_number
-        day_ago_block = current_block - 28800
+        # Wrap contract call in retry
+        def get_nft_supply(web3, contract): return str(contract.functions.totalSupply().call())
+        analytics["total_supply"] = retry_with_fallback_rpcs(get_nft_supply, w3, nft_contract)
         
-        # Get events
-        mint_events = get_historical_events(w3, nft_contract, 'BurnLockCreated', day_ago_block, current_block)
-        claim_events = get_historical_events(w3, nft_contract, 'LockClaimed', day_ago_block, current_block)
-        
-        # Calculate detailed metrics
-        total_supply = nft_contract.functions.totalSupply().call()
-        
-        # Analyze term days distribution
-        term_days_dist = {}
-        total_locked_xen = 0
-        for event in mint_events:
-            term_days = event['args'].get('termDays', 0)
-            xen_amount = event['args'].get('xenAmount', 0)
-            term_days_dist[term_days] = term_days_dist.get(term_days, 0) + 1
-            total_locked_xen += int(xen_amount)
-        
-        return {
-            "total_supply": str(total_supply),
-            "mints_24h": {
-                "count": len(mint_events),
-                "total_xen_locked": str(total_locked_xen)
-            },
-            "claims_24h": len(claim_events),
-            "term_days_distribution": term_days_dist,
-            "average_term_days": sum(days * count for days, count in term_days_dist.items()) // len(mint_events) if mint_events else 0
-        }
+        print("Retrieved NFT total supply from contract state")
     except Exception as e:
-        print("Error calculating NFT analytics:", e)
-        return {}
+        print(f"Error calculating NFT analytics: {e}")
+        analytics["error"] = str(e)
+    return analytics
 
 def get_swap_analytics(w3: Web3, minter_contract: Any) -> Dict[str, Any]:
-    """Get detailed swap analytics and efficiency metrics"""
+    """Get swap analytics from current contract state only (no historical events)"""
+    analytics = { # Default/error state
+        "accumulation": {"error": "Not calculated"}
+    }
+    
     try:
-        current_block = w3.eth.block_number
-        day_ago_block = current_block - 28800
-        
-        # Get swap events
-        swap_failed_events = get_historical_events(w3, minter_contract, 'SwapFailed', day_ago_block, current_block)
-        
-        # Get accumulation progress
-        acc_stats = minter_contract.functions.getAccumulationProgress().call()
+        # Wrap contract call in retry
+        def get_acc_progress(web3, contract): return contract.functions.getAccumulationProgress().call()
+        acc_stats = retry_with_fallback_rpcs(get_acc_progress, w3, minter_contract)
+
         current_pending = acc_stats[0]
         threshold = acc_stats[1]
-        
-        # Calculate efficiency metrics
         progress_percentage = (current_pending / threshold) * 100 if threshold > 0 else 0
-        
-        # Analyze failed swaps
-        failed_swap_reasons = {}
-        total_failed_xen = 0
-        for event in swap_failed_events:
-            reason = event['args'].get('reason', 'Unknown')
-            xen_amount = int(event['args'].get('xenAmount', 0))
-            failed_swap_reasons[reason] = failed_swap_reasons.get(reason, 0) + 1
-            total_failed_xen += xen_amount
-        
-        return {
-            "accumulation": {
-                "current_pending_xen": str(current_pending),
-                "threshold": str(threshold),
-                "progress_percentage": progress_percentage
-            },
-            "failed_swaps_24h": {
-                "count": len(swap_failed_events),
-                "total_xen_failed": str(total_failed_xen),
-                "reasons": failed_swap_reasons
-            }
+        analytics["accumulation"] = {
+            "current_pending_xen": str(current_pending),
+            "threshold": str(threshold),
+            "progress_percentage": progress_percentage
         }
-    except Exception as e:
-        print("Error calculating swap analytics:", e)
-        return {}
-
-# NEW FUNCTIONS FOR ENHANCED STATS
-
-def get_token_info(w3: Web3, token_address: str, abi_file: str) -> Dict[str, Any]:
-    """Get basic token information using Web3"""
-    try:
-        # Load token ABI
-        try:
-            with open(abi_file, "r") as f:
-                token_abi = json.load(f)
-        except FileNotFoundError:
-            # If ABI file is missing, use a basic ERC20 ABI
-            token_abi = [
-                {"constant":True,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":False,"stateMutability":"view","type":"function"},
-                {"constant":True,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":False,"stateMutability":"view","type":"function"},
-                {"constant":True,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":False,"stateMutability":"view","type":"function"},
-                {"constant":True,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":False,"stateMutability":"view","type":"function"}
-            ]
-            print(f"ABI file {abi_file} not found, using basic ERC20 ABI")
         
+        print("Retrieved swap accumulation data from contract state")
+    except Exception as e:
+        print(f"Error calculating swap analytics: {e}")
+        analytics["error"] = str(e) # Add top-level error
+    return analytics
+
+def get_token_total_supply_with_retry(w3: Web3, token_address: str, abi_file_path: str) -> Dict[str, str]:
+    """Fetch total supply for a token, using retry logic and ABI fallback."""
+    result = {
+        "total_supply": "Error",
+        "total_supply_formatted": "Error",
+        "decimals": "18", # Default
+        "error": None
+    }
+
+    token_abi = load_abi_safely(abi_file_path, fallback_abi=BASIC_ERC20_ABI_SNIPPET)
+    if not token_abi:
+         result["error"] = f"Failed to load ABI from {abi_file_path} or fallback."
+         return result
+
+    # Ensure the ABI we ended up with has totalSupply and decimals
+    # If using fallback, it's guaranteed. If loaded, check.
+    has_supply_func = any(f.get('name') == 'totalSupply' for f in token_abi if f.get('type') == 'function')
+    has_decimals_func = any(f.get('name') == 'decimals' for f in token_abi if f.get('type') == 'function')
+
+    if not has_supply_func:
+         result["error"] = "Loaded ABI or fallback missing 'totalSupply' function."
+         # We might still try decimals if it exists
+    if not has_decimals_func:
+         print(f"Warning: ABI for {token_address} missing 'decimals' function, using default 18.")
+         # Keep default 18
+
+    # Define wrapper functions for retry
+    def get_supply(web3, contract):
+        if not has_supply_func: raise Exception("totalSupply function not in ABI")
+        return contract.functions.totalSupply().call()
+
+    def get_decimals(web3, contract):
+        if not has_decimals_func: raise Exception("decimals function not in ABI")
+        return contract.functions.decimals().call()
+
+    try:
         token_contract = w3.eth.contract(
-            address=Web3.to_checksum_address(token_address), 
+            address=Web3.to_checksum_address(token_address),
             abi=token_abi
         )
-        
-        # Prepare result dictionary
-        result = {
-            "address": token_address,
-        }
-        
-        # Get basic token info - handle each function call separately
-        # Each of these could fail if the function doesn't exist in the contract
-        try:
-            result["total_supply"] = str(token_contract.functions.totalSupply().call())
-        except Exception as e:
-            print(f"Error getting total supply: {e}")
-            result["total_supply"] = "0"
-            
-        # Get decimals with fallback to 18 (standard for most ERC20 tokens)
-        try:
-            if any(f['name'] == 'decimals' for f in token_abi if f.get('type') == 'function'):
-                result["decimals"] = token_contract.functions.decimals().call()
-            else:
-                result["decimals"] = 18
-        except Exception as e:
-            print(f"Error getting decimals: {e}")
-            result["decimals"] = 18
-            
-        # Format total supply with decimals
-        try:
-            result["total_supply_formatted"] = str(int(result["total_supply"]) / (10 ** result["decimals"]))
-        except Exception:
-            result["total_supply_formatted"] = "0"
-        
-        # Try to get symbol
-        try:
-            if any(f['name'] == 'symbol' for f in token_abi if f.get('type') == 'function'):
-                result["symbol"] = token_contract.functions.symbol().call()
-            else:
-                result["symbol"] = "UNKNOWN"
-        except Exception as e:
-            print(f"Error getting symbol: {e}")
-            result["symbol"] = "UNKNOWN"
-            
-        # Try to get name
-        try:
-            if any(f['name'] == 'name' for f in token_abi if f.get('type') == 'function'):
-                result["name"] = token_contract.functions.name().call()
-            else:
-                result["name"] = "Unknown Token"
-        except Exception as e:
-            print(f"Error getting name: {e}")
-            result["name"] = "Unknown Token"
-        
-        # Check for owner function - common in many tokens
-        try:
-            if any(f['name'] == 'owner' for f in token_abi if f.get('type') == 'function'):
-                result["owner"] = token_contract.functions.owner().call()
-        except Exception:
-            # Owner function is optional, no need to log this error
-            pass
-        
-        return result
-    except Exception as e:
-        print(f"Error getting token info for {token_address}:", e)
-        return {
-            "address": token_address,
-            "error": str(e),
-            "decimals": 18,
-            "total_supply": "0",
-            "total_supply_formatted": "0",
-            "symbol": "UNKNOWN",
-            "name": "Error Loading Token"
-        }
 
-def get_holders_info(token_address: str, api_key: str) -> Dict[str, Any]:
-    """Get token holders information using Basescan API"""
-    try:
-        print(f"Fetching holders information for token {token_address}")
-        
-        # If no API key is provided, return default values
-        if not api_key:
-            print("No Basescan API key provided, skipping holder information")
-            return {"total_holders": 0, "note": "API key missing"}
-        
-        # Basescan API for token holder count
-        url = f"https://api.basescan.org/api?module=token&action=tokenholderlist&contractaddress={token_address}&page=1&offset=1&apikey={api_key}"
-        
-        # Try the request with a timeout
-        try:
-            response = requests.get(url, timeout=10)
-            
-            if response.status_code == 200:
-                data = response.json()
-                if data.get('status') == '1':
-                    # If we just want the count of holders
-                    holder_count = int(data.get('result', [{}])[0].get('count_unique', 0))
-                    
-                    return {
-                        "total_holders": holder_count
-                    }
-                else:
-                    error_msg = data.get('message', 'Unknown API error')
-                    print(f"API error: {error_msg}")
-                    # Return graceful failure
-                    return {"total_holders": 0, "error": error_msg}
-            else:
-                print(f"Failed to fetch holders. Status code: {response.status_code}")
-                return {"total_holders": 0, "error": f"HTTP Status {response.status_code}"}
-        except requests.Timeout:
-            print("Request to Basescan API timed out")
-            return {"total_holders": 0, "error": "API request timeout"}
-        except requests.RequestException as e:
-            print(f"Request to Basescan API failed: {e}")
-            return {"total_holders": 0, "error": str(e)}
-            
-    except Exception as e:
-        print(f"Error in get_holders_info for {token_address}:", e)
-        return {"total_holders": 0, "error": str(e)}
-
-def get_circulating_supply(w3: Web3, token_address: str, token_abi_file: str) -> Dict[str, Any]:
-    """Calculate circulating supply by excluding known treasury/locked addresses"""
-    try:
-        # Load token ABI
-        with open(token_abi_file, "r") as f:
-            token_abi = json.load(f)
-        
-        token_contract = w3.eth.contract(
-            address=Web3.to_checksum_address(token_address), 
-            abi=token_abi
-        )
-        
-        # Get total supply
-        total_supply = token_contract.functions.totalSupply().call()
-        decimals = token_contract.functions.decimals().call()
-        
-        # Common addresses to exclude (team wallets, treasury, locked tokens)
-        # This should be customized based on the specific token
-        excluded_addresses = [
-            XBURNMINTER_ADDRESS,  # Minter contract often holds tokens
-            # Add other known locked addresses here
-        ]
-        
-        # Calculate excluded balance
-        excluded_balance = 0
-        for address in excluded_addresses:
+        # Get Decimals first (with retry, fallback to 18 on error)
+        if has_decimals_func:
             try:
-                balance = token_contract.functions.balanceOf(Web3.to_checksum_address(address)).call()
-                excluded_balance += balance
-                print(f"Address {address} holds {balance / (10 ** decimals)} tokens")
+                decimals_val = retry_with_fallback_rpcs(get_decimals, w3, token_contract)
+                result["decimals"] = str(decimals_val)
             except Exception as e:
-                print(f"Error getting balance for {address}:", e)
-        
-        # Calculate circulating supply
-        circulating_supply = total_supply - excluded_balance
-        
-        return {
-            "total_supply": str(total_supply),
-            "total_supply_formatted": str(total_supply / (10 ** decimals)),
-            "excluded_balance": str(excluded_balance),
-            "excluded_balance_formatted": str(excluded_balance / (10 ** decimals)),
-            "circulating_supply": str(circulating_supply),
-            "circulating_supply_formatted": str(circulating_supply / (10 ** decimals)),
-            "circulating_percentage": (circulating_supply / total_supply) * 100 if total_supply > 0 else 0
-        }
-    except Exception as e:
-        print(f"Error calculating circulating supply for {token_address}:", e)
-        return {}
+                print(f"Error getting decimals for {token_address} even with retry, using 18: {e}")
+                # Keep default 18
+        # else: decimals remains 18 (default)
 
-def get_transfer_analytics(w3: Web3, token_address: str, token_abi_file: str) -> Dict[str, Any]:
-    """Get analytics on token transfers over the past 24h and 7d"""
-    try:
-        # Load token ABI
-        with open(token_abi_file, "r") as f:
-            token_abi = json.load(f)
-        
-        token_contract = w3.eth.contract(
-            address=Web3.to_checksum_address(token_address), 
-            abi=token_abi
-        )
-        
-        current_block = w3.eth.block_number
-        day_ago_block = current_block - 28800  # Approx blocks in 24h on Base
-        week_ago_block = current_block - 201600  # Approx blocks in 7 days
-        
-        # Get Transfer events
-        transfers_24h = get_historical_events(w3, token_contract, 'Transfer', day_ago_block, current_block)
-        transfers_7d = get_historical_events(w3, token_contract, 'Transfer', week_ago_block, current_block)
-        
-        # Analyze transfers for 24h
-        unique_senders_24h = len(set(event['args']['from'] for event in transfers_24h))
-        unique_receivers_24h = len(set(event['args']['to'] for event in transfers_24h))
-        total_volume_24h = sum(int(event['args']['value']) for event in transfers_24h)
-        
-        # Analyze transfers for 7d
-        unique_senders_7d = len(set(event['args']['from'] for event in transfers_7d))
-        unique_receivers_7d = len(set(event['args']['to'] for event in transfers_7d))
-        total_volume_7d = sum(int(event['args']['value']) for event in transfers_7d)
-        
-        return {
-            "transfers_24h": {
-                "count": len(transfers_24h),
-                "unique_senders": unique_senders_24h,
-                "unique_receivers": unique_receivers_24h,
-                "total_volume": str(total_volume_24h)
-            },
-            "transfers_7d": {
-                "count": len(transfers_7d),
-                "unique_senders": unique_senders_7d,
-                "unique_receivers": unique_receivers_7d,
-                "total_volume": str(total_volume_7d)
-            }
-        }
-    except Exception as e:
-        print(f"Error calculating transfer analytics for {token_address}:", e)
-        return {}
+        # Get Total Supply (with retry)
+        if has_supply_func:
+            try:
+                total_supply_raw = retry_with_fallback_rpcs(get_supply, w3, token_contract)
+                result["total_supply"] = str(total_supply_raw)
+                # Try formatting
+                try:
+                    result["total_supply_formatted"] = str(total_supply_raw / (10 ** int(result["decimals"])))
+                except Exception as format_e:
+                    print(f"Error formatting total supply for {token_address}: {format_e}")
+                    result["total_supply_formatted"] = "Error"
+                    result["error"] = (result["error"] + "; " if result["error"] else "") + "Formatting failed"
+            except Exception as e:
+                print(f"Error getting total supply for {token_address} even with retry: {e}")
+                result["error"] = f"totalSupply call failed: {str(e)}"
+                # Supply is already "Error"
+        else:
+             # Error already set if has_supply_func is False
+             pass
 
-def get_cbxen_stats(w3: Web3, cbxen_address: str, cbxen_abi_file: str) -> Dict[str, Any]:
-    """Get specific stats for CBXEN token"""
-    try:
-        # First get basic token info
-        cbxen_info = get_token_info(w3, cbxen_address, cbxen_abi_file)
-        
-        # Load CBXEN ABI
-        with open(cbxen_abi_file, "r") as f:
-            cbxen_abi = json.load(f)
-        
-        cbxen_contract = w3.eth.contract(
-            address=Web3.to_checksum_address(cbxen_address), 
-            abi=cbxen_abi
-        )
-        
-        # Get CBXEN specific metrics
-        # These function calls would depend on the specific functions available in the CBXEN contract
-        # Below are example function calls that might exist - adjust based on actual contract
-        
-        # Check if specific CBXEN functions exist before calling
-        metrics = {}
-        
-        # Example: Check if there's a rate function
-        if any(f['name'] == 'getExchangeRate' for f in cbxen_abi if f['type'] == 'function'):
-            rate = cbxen_contract.functions.getExchangeRate().call()
-            metrics["exchange_rate"] = str(rate)
-        
-        # Get holders and circulating supply
-        holders_info = get_holders_info(cbxen_address, os.environ.get("ETHERSCAN_API_KEY"))
-        circulating_supply = get_circulating_supply(w3, cbxen_address, cbxen_abi_file)
-        transfer_analytics = get_transfer_analytics(w3, cbxen_address, cbxen_abi_file)
-        
-        # Combine all data
-        return {
-            "token_info": cbxen_info,
-            "metrics": metrics,
-            "holders": holders_info,
-            "supply": circulating_supply,
-            "transfers": transfer_analytics
-        }
-    except Exception as e:
-        print(f"Error getting CBXEN stats: {e}")
-        return {}
+
+    except Exception as e: # Catch contract init errors
+        print(f"Major error interacting with token {token_address}: {e}")
+        result["error"] = f"Contract interaction failed: {str(e)}"
+
+    return result
+
+
+# --- Main Execution ---
 
 def main():
     print("Starting enhanced stats collection...")
-    
+
     # Load environment variables
     rpc_url = os.environ.get("RPC_URL")
-    etherscan_api_key = os.environ.get("ETHERSCAN_API_KEY")
-    if not etherscan_api_key:
-        print("Warning: Missing ETHERSCAN_API_KEY in environment, some features will be limited")
-    
-    # Initialize web3 with fallbacks
+    # Removed Etherscan API key check as it's not needed for this version
+
+    # Initialize web3 using fallbacks
+    w3 = None
     try:
         w3 = init_web3_with_fallbacks(rpc_url)
+    except ConnectionError as e:
+        print(f"CRITICAL ERROR: {e}")
+        return # Exit if no RPC connection possible
     except Exception as e:
-        print(f"Failed to connect to any RPC: {e}")
-        create_empty_stats_file()
+        print(f"CRITICAL ERROR initializing Web3: {e}")
         return
 
-    # Basic ERC20 ABI (create if missing)
-    basic_erc20_abi = [
-        {"constant":True,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":False,"stateMutability":"view","type":"function"},
-        {"constant":True,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":False,"stateMutability":"view","type":"function"},
-        {"constant":True,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":False,"stateMutability":"view","type":"function"},
-        {"constant":True,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":False,"stateMutability":"view","type":"function"},
-        {"constant":True,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"payable":False,"stateMutability":"view","type":"function"},
-        {"anonymous":False,"inputs":[{"indexed":True,"name":"from","type":"address"},{"indexed":True,"name":"to","type":"address"},{"indexed":False,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"}
-    ]
-    
-    try:
-        # Load mandatory contract ABIs
-        try:
-            with open("XBurnMinter_abi.json", "r") as f:
-                xburnminter_abi = json.load(f)
-            with open("XBurnNFT_abi.json", "r") as f:
-                nft_abi = json.load(f)
-        except Exception as e:
-            print(f"Error loading mandatory ABIs: {e}")
-            create_empty_stats_file()
-            return
-        
-        # Load or create optional ABIs
-        try:
-            with open("ERC20_abi.json", "r") as f:
-                erc20_abi = json.load(f)
-        except FileNotFoundError:
-            print("ERC20_abi.json not found, using basic ERC20 ABI")
-            erc20_abi = basic_erc20_abi
-            # Create the file for future use
-            with open("ERC20_abi.json", "w") as f:
-                json.dump(erc20_abi, f, indent=4)
-        
-        # For CBXEN, use ERC20 ABI if file not found
-        try:
-            with open("CBXEN_abi.json", "r") as f:
-                cbxen_abi = json.load(f)
-        except FileNotFoundError:
-            print("CBXEN_abi.json not found, using ERC20 ABI as fallback")
-            cbxen_abi = erc20_abi
-    except Exception as e:
-        print(f"Error handling ABIs: {e}")
-        create_empty_stats_file()
-        return
-        
-    # Initialize contracts with rate limiting protection
+    # Load mandatory contract ABIs
+    # Assuming these ABI files exist and are correct
+    minter_abi_path = "XBurnMinter_abi.json"
+    nft_abi_path = "XBurnNFT_abi.json"
+    cbxen_abi_path = "CBXEN_abi.json" # ABI for CBXEN token
+
+    xburnminter_abi = load_abi_safely(minter_abi_path)
+    nft_abi = load_abi_safely(nft_abi_path)
+
+    if not xburnminter_abi or not nft_abi:
+         print("CRITICAL ERROR: Failed to load mandatory Minter or NFT ABI. Exiting.")
+         return
+
+    # Initialize contracts (wrap calls in retry)
+    minter_contract = None
+    nft_contract = None
+    nft_address = "Error" # Default state
+
     try:
         minter_contract = w3.eth.contract(address=Web3.to_checksum_address(XBURNMINTER_ADDRESS), abi=xburnminter_abi)
-        
-        # Get NFT contract address with retry logic
-        nft_address = None
-        for attempt in range(3):  # Try up to 3 times
-            try:
-                nft_address = minter_contract.functions.nftContract().call()
-                break
-            except Exception as e:
-                print(f"Attempt {attempt+1} failed to get NFT contract address: {e}")
-                time.sleep(2)  # Wait before retry
-        
-        if nft_address is None:
-            print("Failed to get NFT contract address after retries")
-            nft_address = "0x0000000000000000000000000000000000000000"  # Fallback
-            
-        nft_contract = w3.eth.contract(address=Web3.to_checksum_address(nft_address), abi=nft_abi)
-    except Exception as e:
-        print(f"Error initializing contracts: {e}")
-        create_empty_stats_file()
-        return
+        print("Minter contract object created.")
 
-    # Get all liquidity pairs data with graceful failure
-    all_pairs = []
-    try:
-        all_pairs = fetch_all_pairs(XBURN_ADDRESS)
-    except Exception as e:
-        print(f"Failed to fetch pairs: {e}")
-    
-    liquidity_pools = {}
-    for pair in all_pairs:
-        try:
-            liquidity_pools[pair['pairAddress']] = get_pool_stats(pair)
-        except Exception as e:
-            print(f"Error processing pair {pair.get('pairAddress')}: {e}")
+        # Define wrapper for nftContract call
+        def get_nft_addr(web3, contract): return contract.functions.nftContract().call()
 
-    # Get enhanced analytics with graceful failures
+        print("Attempting to retrieve NFT contract address...")
+        nft_address = retry_with_fallback_rpcs(get_nft_addr, w3, minter_contract)
+        print(f"Retrieved NFT address: {nft_address}")
+
+        if nft_address and Web3.is_address(nft_address) and nft_address != '0x0000000000000000000000000000000000000000':
+            nft_contract = w3.eth.contract(address=Web3.to_checksum_address(nft_address), abi=nft_abi)
+            print("NFT contract object created.")
+        else:
+            print("WARNING: Invalid or zero address returned for NFT contract. NFT stats will be skipped.")
+            nft_contract = None # Ensure it's None if address is bad
+
+    except Exception as e:
+        print(f"CRITICAL Error initializing core contracts: {e}")
+        # Allow script to continue if possible, but core stats might fail
+        if not minter_contract: minter_contract = None # Ensure None if init failed
+        if not nft_contract: nft_contract = None
+
+
+    # --- Data Fetching (using retry wrappers where needed) ---
+
+    # Burn Metrics
     burn_metrics = {}
-    try:
+    if minter_contract:
         burn_metrics = calculate_burn_metrics(w3, minter_contract)
-    except Exception as e:
-        print(f"Error calculating burn metrics: {e}")
-    
+    else:
+        burn_metrics = {"error": "Minter contract not available"}
+
+    # NFT Analytics
     nft_analytics = {}
-    try:
+    if nft_contract: # Check if nft_contract was successfully initialized
         nft_analytics = get_nft_analytics(w3, nft_contract)
-    except Exception as e:
-        print(f"Error calculating NFT analytics: {e}")
-    
+    else:
+        nft_analytics = {"error": f"NFT contract not available (Address: {nft_address})"}
+
+    # Swap Analytics
     swap_analytics = {}
-    try:
+    if minter_contract:
         swap_analytics = get_swap_analytics(w3, minter_contract)
-    except Exception as e:
-        print(f"Error calculating swap analytics: {e}")
+    else:
+        swap_analytics = {"error": "Minter contract not available"}
 
-    # Get global stats with retry logic and fallback RPCs
-    global_stats_data = {}
-    try:
-        # Function to get global stats that can be retried
-        def get_global_stats(web3, contract):
-            return contract.functions.getGlobalStats().call()
-            
-        # Try up to 3 times with increasing backoff and RPC fallbacks
-        for attempt in range(3):
-            try:
-                # Try with original and fallback RPCs
-                global_stats = retry_with_fallback_rpcs(get_global_stats, w3, minter_contract)
-                
-                global_stats_data = {
-                    "currentAMP": str(global_stats[0]),
-                    "daysSinceLaunch": str(global_stats[1]),
-                    "totalBurnedXEN": str(global_stats[2]),
-                    "totalMintedXBURN": str(global_stats[3]),
-                    "ampDecayDaysLeft": str(global_stats[4])
-                }
-                break  # Success, exit retry loop
-            except Exception as e:
-                wait_time = 2 ** attempt  # Exponential backoff: 1, 2, 4 seconds
-                print(f"Attempt {attempt+1} failed to get global stats: {e}")
-                print(f"Waiting {wait_time} seconds before retry...")
-                time.sleep(wait_time)
-                
-        # If all retries failed, provide default data
-        if not global_stats_data:
-            print("All attempts to get global stats failed, using defaults")
-            global_stats_data = {
-                "currentAMP": "0",
-                "daysSinceLaunch": "0",
-                "totalBurnedXEN": "0",
-                "totalMintedXBURN": "0",
-                "ampDecayDaysLeft": "0",
-                "error": "Failed to retrieve after multiple attempts"
-            }
-    except Exception as e:
-        print(f"Error getting global stats: {e}")
-        global_stats_data = {
-            "error": str(e)
-        }
+    # Global Stats
+    global_stats_data = {"error": "Minter contract not available"}
+    if minter_contract:
+        try:
+            # Define wrapper for getGlobalStats call
+            def get_global_stats(web3, contract): return contract.functions.getGlobalStats().call()
+            print("Attempting to retrieve Global Stats...")
+            global_stats = retry_with_fallback_rpcs(get_global_stats, w3, minter_contract)
 
-    # Initialize contracts
-    minter_contract = w3.eth.contract(address=Web3.to_checksum_address(XBURNMINTER_ADDRESS), abi=xburnminter_abi)
-    nft_address = minter_contract.functions.nftContract().call()
-    nft_contract = w3.eth.contract(address=Web3.to_checksum_address(nft_address), abi=nft_abi)
+            # Process if data is valid tuple/list
+            if global_stats and isinstance(global_stats, (list, tuple)) and len(global_stats) >= 5:
+                 global_stats_data = {
+                     "currentAMP": str(global_stats[0]),
+                     "daysSinceLaunch": str(global_stats[1]),
+                     "totalBurnedXEN": str(global_stats[2]),
+                     "totalMintedXBURN": str(global_stats[3]), # Corresponds to Minter data
+                     "ampDecayDaysLeft": str(global_stats[4])
+                 }
+                 print("Successfully retrieved Global Stats.")
+            else:
+                 print(f"Warning: getGlobalStats call returned unexpected data: {global_stats}")
+                 global_stats_data = {"error": "Invalid data structure returned"}
+        except Exception as e:
+            print(f"Error getting global stats: {e}")
+            global_stats_data = {"error": f"Failed to retrieve global stats: {str(e)}"}
 
-    # Get all liquidity pairs data
-    all_pairs = fetch_all_pairs(XBURN_ADDRESS)
-    liquidity_pools = {pair['pairAddress']: get_pool_stats(pair) for pair in all_pairs}
+    # --- Fetch Token Supplies ---
+    print("Fetching token total supplies...")
+    # Use Minter ABI for XBURN token supply, per user confirmation
+    xburn_supply_data = get_token_total_supply_with_retry(w3, XBURN_ADDRESS, minter_abi_path)
+    cbxen_supply_data = get_token_total_supply_with_retry(w3, CBXEN_ADDRESS, cbxen_abi_path) # Assumes CBXEN_abi.json exists or uses fallback
+    # --- End Fetch Token Supplies ---
 
-    # Get enhanced analytics
-    burn_metrics = calculate_burn_metrics(w3, minter_contract)
-    nft_analytics = get_nft_analytics(w3, nft_contract)
-    swap_analytics = get_swap_analytics(w3, minter_contract)
-
-    # Get global stats
-    global_stats = minter_contract.functions.getGlobalStats().call()
-    global_stats_data = {
-        "currentAMP": str(global_stats[0]),
-        "daysSinceLaunch": str(global_stats[1]),
-        "totalBurnedXEN": str(global_stats[2]),
-        "totalMintedXBURN": str(global_stats[3]),
-        "ampDecayDaysLeft": str(global_stats[4])
-    }
-
-    # NEW STATS COLLECTION
-    print("Collecting token holder and supply statistics...")
-    
-    # Get XBURN token stats
-    xburn_info = get_token_info(w3, XBURN_ADDRESS, "ERC20_abi.json")
-    xburn_holders = {}
-    xburn_supply = {}
-    xburn_transfers = {}
-    
-    # Try to get additional XBURN stats but continue if they fail
-    try:
-        xburn_holders = get_holders_info(XBURN_ADDRESS, etherscan_api_key)
-    except Exception as e:
-        print(f"Failed to get XBURN holders info: {e}")
-    
-    try:
-        xburn_supply = get_circulating_supply(w3, XBURN_ADDRESS, "ERC20_abi.json")
-    except Exception as e:
-        print(f"Failed to get XBURN supply info: {e}")
-    
-    try:
-        xburn_transfers = get_transfer_analytics(w3, XBURN_ADDRESS, "ERC20_abi.json")
-    except Exception as e:
-        print(f"Failed to get XBURN transfer analytics: {e}")
-    
-    # Get CBXEN token stats - handle this gracefully if missing
-    cbxen_stats = {}
-    try:
-        cbxen_stats = get_cbxen_stats(w3, CBXEN_ADDRESS, "CBXEN_abi.json")
-    except Exception as e:
-        print(f"Failed to get CBXEN stats (this is non-critical): {e}")
-    
-    # Get XEN token stats (for comparison) - handle gracefully
-    xen_info = {}
-    xen_holders = {}
-    xen_supply = {}
-    
-    try:
-        xen_info = get_token_info(w3, XEN_ADDRESS, "ERC20_abi.json")
-    except Exception as e:
-        print(f"Failed to get XEN token info: {e}")
-    
-    try:
-        xen_holders = get_holders_info(XEN_ADDRESS, etherscan_api_key)
-    except Exception as e:
-        print(f"Failed to get XEN holders info: {e}")
-    
-    try:
-        xen_supply = get_circulating_supply(w3, XEN_ADDRESS, "ERC20_abi.json")
-    except Exception as e:
-        print(f"Failed to get XEN supply info: {e}")
-    
-    # Build enhanced stats object
+    # Build final stats object
     stats = {
         "timestamp": datetime.now().isoformat(),
         "globalStats": global_stats_data,
         "burnMetrics": burn_metrics,
         "swapAnalytics": swap_analytics,
-        "liquidityPools": liquidity_pools,
+        # "liquidityPools": {}, # Removed DexScreener data
         "nftAnalytics": nft_analytics,
-        # New stats
-        "tokenStats": {
-            "xburn": {
-                "info": xburn_info,
-                "holders": xburn_holders,
-                "supply": xburn_supply,
-                "transfers": xburn_transfers
-            },
-            "cbxen": cbxen_stats,
-            "xen": {
-                "info": xen_info,
-                "holders": xen_holders,
-                "supply": xen_supply
-            }
+        "tokenSupply": { # Added section for token supplies
+            "xburn": xburn_supply_data,
+            "cbxen": cbxen_supply_data
         },
-        "lastUpdated": int(time.time())  # Using time.time() instead of block timestamp for reliability
+        "lastUpdated": int(time.time()) # Use script execution time
     }
 
     # Save stats to file
     try:
-        # Check if the file exists and compare with current stats
-        current_stats = {}
-        if os.path.exists("stats.json"):
-            try:
-                with open("stats.json", "r") as infile:
-                    current_stats = json.load(infile)
-            except json.JSONDecodeError:
-                print("Existing stats.json is not valid JSON, will overwrite")
-                current_stats = {}
-            
-        # Compare the new stats with the current stats
-        # Remove timestamp and lastUpdated from comparison
-        compare_stats = stats.copy()
-        compare_current = current_stats.copy()
-        
-        if 'timestamp' in compare_stats:
-            del compare_stats['timestamp']
-        if 'lastUpdated' in compare_stats:
-            del compare_stats['lastUpdated']
-            
-        if 'timestamp' in compare_current:
-            del compare_current['timestamp']
-        if 'lastUpdated' in compare_current:
-            del compare_current['lastUpdated']
-        
-        # Compare the stats
-        if compare_current and compare_stats == compare_current:
-            print("\nNo changes detected in stats. File remains unchanged.")
-            return
-        
-        # If we get here, there are changes, so save the file
         with open("stats.json", "w") as outfile:
             json.dump(stats, outfile, indent=4)
-        print("\nEnhanced stats successfully saved to stats.json")
+        print("Enhanced stats successfully saved to stats.json")
     except Exception as e:
         print(f"Error saving stats: {e}")
-        # Attempt to create a basic stats file as a fallback
-        create_empty_stats_file()
+        # Optionally create an empty/error file here if save fails
 
 if __name__ == "__main__":
-    main()
+    main() 
