@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-04-26T07:37:36.866851",
+    "timestamp": "2025-04-26T07:52:06.157196",
     "globalStats": {
         "currentAMP": "2392",
         "daysSinceLaunch": "5",
@@ -29,11 +29,11 @@
             "error": null
         },
         "cbxen": {
-            "total_supply": "280139856892185599697225294525076",
-            "total_supply_formatted": "280139856892185.6",
+            "total_supply": "280147600484341599697225294525076",
+            "total_supply_formatted": "280147600484341.6",
             "decimals": "18",
             "error": null
         }
     },
-    "lastUpdated": 1745653056
+    "lastUpdated": 1745653926
 }
