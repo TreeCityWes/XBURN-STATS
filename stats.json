@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-05-03T10:21:00.194268",
+    "timestamp": "2025-05-03T10:41:55.116022",
     "globalStats": {
         "currentAMP": "2385",
         "daysSinceLaunch": "12",
@@ -23,8 +23,8 @@
     },
     "tokenSupply": {
         "xburn": {
-            "total_supply": "61472671721926307033784336",
-            "total_supply_formatted": "61472671.72192631",
+            "total_supply": "61472571721926307033784336",
+            "total_supply_formatted": "61472571.72192631",
             "decimals": "18",
             "error": null
         },
@@ -35,5 +35,5 @@
             "error": null
         }
     },
-    "lastUpdated": 1746267660
+    "lastUpdated": 1746268915
 }
