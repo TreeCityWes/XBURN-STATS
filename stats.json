@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-05-06T23:51:50.956129",
+    "timestamp": "2025-05-07T01:49:02.189949",
     "globalStats": {
         "currentAMP": "2381",
         "daysSinceLaunch": "16",
@@ -23,17 +23,17 @@
     },
     "tokenSupply": {
         "xburn": {
-            "total_supply": "70673401312986526842495692",
-            "total_supply_formatted": "70673401.31298652",
+            "total_supply": "70673351312986526842495692",
+            "total_supply_formatted": "70673351.31298652",
             "decimals": "18",
             "error": null
         },
         "cbxen": {
-            "total_supply": "295503635122478860296202421728546",
-            "total_supply_formatted": "295503635122478.9",
+            "total_supply": "295520757173861406688842421728546",
+            "total_supply_formatted": "295520757173861.44",
             "decimals": "18",
             "error": null
         }
     },
-    "lastUpdated": 1746575510
+    "lastUpdated": 1746582542
 }
