@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-06-16T15:57:17.050877",
+    "timestamp": "2025-06-16T16:34:42.735033",
     "globalStats": {
         "currentAMP": "2341",
         "daysSinceLaunch": "56",
@@ -13,9 +13,9 @@
     },
     "swapAnalytics": {
         "accumulation": {
-            "current_pending_xen": "120000000000000000000000000000",
+            "current_pending_xen": "0",
             "threshold": "500000000000000000000000000",
-            "progress_percentage": 24000.0
+            "progress_percentage": 0.0
         }
     },
     "nftAnalytics": {
@@ -23,17 +23,17 @@
     },
     "tokenSupply": {
         "xburn": {
-            "total_supply": "114582872382698063546647056",
-            "total_supply_formatted": "114582872.38269806",
+            "total_supply": "114333451749832772056644118",
+            "total_supply_formatted": "114333451.74983278",
             "decimals": "18",
             "error": null
         },
         "cbxen": {
-            "total_supply": "378878080531925722313077306730480",
-            "total_supply_formatted": "378878080531925.75",
+            "total_supply": "378917012767807056505397306730480",
+            "total_supply_formatted": "378917012767807.06",
             "decimals": "18",
             "error": null
         }
     },
-    "lastUpdated": 1750089437
+    "lastUpdated": 1750091682
 }
