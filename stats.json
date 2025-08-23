@@ -1,39 +1,35 @@
 {
-    "timestamp": "2025-08-23T18:28:26.408899",
+    "timestamp": "2025-08-23T18:48:54.302442",
     "globalStats": {
-        "currentAMP": "2273",
-        "daysSinceLaunch": "124",
-        "totalBurnedXEN": "253697955937759226338086393311906",
-        "totalMintedXBURN": "206179822193706371592608692",
-        "ampDecayDaysLeft": "2272"
+        "error": "Failed to retrieve global stats: {'message': 'no response', 'code': -32603}"
     },
     "burnMetrics": {
-        "total_burned": "253697955937759226338086393311906",
-        "burn_rank": "1666"
+        "total_burned": "Error",
+        "burn_rank": "Error",
+        "error": "{'message': 'no response', 'code': -32603}"
     },
     "swapAnalytics": {
         "accumulation": {
-            "current_pending_xen": "61183285568878125417201131758",
-            "threshold": "500000000000000000000000000",
-            "progress_percentage": 12236.657113775625
-        }
+            "error": "Not calculated"
+        },
+        "error": "{'message': 'no response', 'code': -32603}"
     },
     "nftAnalytics": {
-        "total_supply": "147"
+        "error": "NFT contract not available (Address: Error)"
     },
     "tokenSupply": {
         "xburn": {
-            "total_supply": "152201929456491127325817831",
-            "total_supply_formatted": "152201929.4564911",
+            "total_supply": "Error",
+            "total_supply_formatted": "Error",
             "decimals": "18",
-            "error": null
+            "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
         },
         "cbxen": {
-            "total_supply": "485493820089898384384345550770052",
-            "total_supply_formatted": "485493820089898.4",
+            "total_supply": "Error",
+            "total_supply_formatted": "Error",
             "decimals": "18",
-            "error": null
+            "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
         }
     },
-    "lastUpdated": 1755973706
+    "lastUpdated": 1755974934
 }
