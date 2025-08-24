@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-08-24T16:46:43.741773",
+    "timestamp": "2025-08-24T16:58:04.397618",
     "globalStats": {
         "error": "Failed to retrieve global stats: {'message': 'no response', 'code': -32603}"
     },
@@ -10,9 +10,10 @@
     },
     "swapAnalytics": {
         "accumulation": {
-            "error": "Not calculated"
-        },
-        "error": "{'message': 'no response', 'code': -32603}"
+            "current_pending_xen": "61183285568878125417201131758",
+            "threshold": "500000000000000000000000000",
+            "progress_percentage": 12236.657113775625
+        }
     },
     "nftAnalytics": {
         "error": "NFT contract not available (Address: Error)"
@@ -31,5 +32,5 @@
             "error": null
         }
     },
-    "lastUpdated": 1756054003
+    "lastUpdated": 1756054684
 }
