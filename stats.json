@@ -1,11 +1,7 @@
 {
-    "timestamp": "2025-09-02T13:32:35.915180",
+    "timestamp": "2025-09-02T13:55:35.851275",
     "globalStats": {
-        "currentAMP": "2263",
-        "daysSinceLaunch": "134",
-        "totalBurnedXEN": "254506340870970057042728869924736",
-        "totalMintedXBURN": "207003113411982694900497191",
-        "ampDecayDaysLeft": "2262"
+        "error": "Failed to retrieve global stats: {'message': 'no response', 'code': -32603}"
     },
     "burnMetrics": {
         "total_burned": "Error",
@@ -23,17 +19,17 @@
     },
     "tokenSupply": {
         "xburn": {
-            "total_supply": "152584592335705528239591932",
-            "total_supply_formatted": "152584592.33570552",
+            "total_supply": "Error",
+            "total_supply_formatted": "Error",
             "decimals": "18",
-            "error": null
+            "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
         },
         "cbxen": {
-            "total_supply": "543187701746943181731308061910075",
-            "total_supply_formatted": "543187701746943.2",
+            "total_supply": "Error",
+            "total_supply_formatted": "Error",
             "decimals": "18",
-            "error": null
+            "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
         }
     },
-    "lastUpdated": 1756819955
+    "lastUpdated": 1756821335
 }
