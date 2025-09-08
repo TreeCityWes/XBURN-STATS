@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-09-08T18:33:43.642409",
+    "timestamp": "2025-09-08T18:55:22.883618",
     "globalStats": {
         "error": "Failed to retrieve global stats: {'message': 'no response', 'code': -32603}"
     },
@@ -15,7 +15,8 @@
         "error": "{'message': 'no response', 'code': -32603}"
     },
     "nftAnalytics": {
-        "error": "NFT contract not available (Address: Error)"
+        "total_supply": "Error",
+        "error": "{'message': 'no response', 'code': -32603}"
     },
     "tokenSupply": {
         "xburn": {
@@ -31,5 +32,5 @@
             "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
         }
     },
-    "lastUpdated": 1757356423
+    "lastUpdated": 1757357722
 }
