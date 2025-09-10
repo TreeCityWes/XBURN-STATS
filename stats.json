@@ -1,7 +1,11 @@
 {
-    "timestamp": "2025-09-10T06:54:35.498419",
+    "timestamp": "2025-09-10T07:20:32.761401",
     "globalStats": {
-        "error": "Failed to retrieve global stats: {'message': 'no response', 'code': -32603}"
+        "currentAMP": "2255",
+        "daysSinceLaunch": "142",
+        "totalBurnedXEN": "280582934313600608898779360525516",
+        "totalMintedXBURN": "211188433498461056214065304",
+        "ampDecayDaysLeft": "2254"
     },
     "burnMetrics": {
         "total_burned": "280582934313600608898779360525516",
@@ -31,5 +35,5 @@
             "error": null
         }
     },
-    "lastUpdated": 1757487275
+    "lastUpdated": 1757488832
 }
