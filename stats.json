@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-09-13T13:54:23.273351",
+    "timestamp": "2025-09-13T14:17:52.940878",
     "globalStats": {
         "error": "Failed to retrieve global stats: {'message': 'no response', 'code': -32603}"
     },
@@ -31,5 +31,5 @@
             "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
         }
     },
-    "lastUpdated": 1757771663
+    "lastUpdated": 1757773072
 }
