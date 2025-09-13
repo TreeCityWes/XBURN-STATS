@@ -1,12 +1,11 @@
 {
-    "timestamp": "2025-09-13T21:53:57.692430",
+    "timestamp": "2025-09-13T22:19:24.530063",
     "globalStats": {
         "error": "Failed to retrieve global stats: {'message': 'no response', 'code': -32603}"
     },
     "burnMetrics": {
-        "total_burned": "Error",
-        "burn_rank": "Error",
-        "error": "{'message': 'no response', 'code': -32603}"
+        "total_burned": "286719835853034923414513003995667",
+        "burn_rank": "1702"
     },
     "swapAnalytics": {
         "accumulation": {
@@ -31,5 +30,5 @@
             "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
         }
     },
-    "lastUpdated": 1757800437
+    "lastUpdated": 1757801964
 }
