@@ -1,15 +1,15 @@
 {
-    "timestamp": "2025-09-17T06:32:10.725730",
+    "timestamp": "2025-09-17T06:54:11.252983",
     "globalStats": {
         "currentAMP": "2248",
         "daysSinceLaunch": "149",
-        "totalBurnedXEN": "300218487282850100475188550059190",
+        "totalBurnedXEN": "303916934654554772643681838372604",
         "totalMintedXBURN": "225435262201144211465274639",
         "ampDecayDaysLeft": "2247"
     },
     "burnMetrics": {
-        "total_burned": "300218487282850100475188550059190",
-        "burn_rank": "1704"
+        "total_burned": "303916934654554772643681838372604",
+        "burn_rank": "1705"
     },
     "swapAnalytics": {
         "accumulation": {
@@ -19,21 +19,21 @@
         }
     },
     "nftAnalytics": {
-        "total_supply": "155"
+        "total_supply": "156"
     },
     "tokenSupply": {
         "xburn": {
-            "total_supply": "160780946532784661119243911",
-            "total_supply_formatted": "160780946.53278467",
+            "total_supply": "159449237248716147796011249",
+            "total_supply_formatted": "159449237.24871615",
             "decimals": "18",
             "error": null
         },
         "cbxen": {
-            "total_supply": "607861449276173591240286196708755",
-            "total_supply_formatted": "607861449276173.6",
+            "total_supply": "604902691378809853505491566058023",
+            "total_supply_formatted": "604902691378809.9",
             "decimals": "18",
             "error": null
         }
     },
-    "lastUpdated": 1758090730
+    "lastUpdated": 1758092051
 }
