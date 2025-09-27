@@ -1,39 +1,35 @@
 {
-    "timestamp": "2025-09-27T04:42:37.899934",
+    "timestamp": "2025-09-27T04:56:10.059797",
     "globalStats": {
-        "currentAMP": "2238",
-        "daysSinceLaunch": "159",
-        "totalBurnedXEN": "329217042857624068264732571011454",
-        "totalMintedXBURN": "234982304596590218660432789",
-        "ampDecayDaysLeft": "2237"
+        "error": "Failed to retrieve global stats: {'message': 'no response', 'code': -32603}"
     },
     "burnMetrics": {
-        "total_burned": "329217042857624068264732571011454",
-        "burn_rank": "1727"
+        "total_burned": "Error",
+        "burn_rank": "Error",
+        "error": "{'message': 'no response', 'code': -32603}"
     },
     "swapAnalytics": {
         "accumulation": {
-            "current_pending_xen": "4000000000000000000000000000",
-            "threshold": "500000000000000000000000000",
-            "progress_percentage": 800.0
-        }
+            "error": "Not calculated"
+        },
+        "error": "{'message': 'no response', 'code': -32603}"
     },
     "nftAnalytics": {
-        "total_supply": "173"
+        "error": "NFT contract not available (Address: Error)"
     },
     "tokenSupply": {
         "xburn": {
-            "total_supply": "159397353180649224785300706",
-            "total_supply_formatted": "159397353.18064922",
+            "total_supply": "Error",
+            "total_supply_formatted": "Error",
             "decimals": "18",
-            "error": null
+            "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
         },
         "cbxen": {
-            "total_supply": "689470273741919699167683479946943",
-            "total_supply_formatted": "689470273741919.8",
+            "total_supply": "Error",
+            "total_supply_formatted": "Error",
             "decimals": "18",
-            "error": null
+            "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
         }
     },
-    "lastUpdated": 1758948157
+    "lastUpdated": 1758948970
 }
