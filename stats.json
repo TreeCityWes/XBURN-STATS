@@ -1,11 +1,11 @@
 {
-    "timestamp": "2025-10-01T19:17:19.900977",
+    "timestamp": "2025-10-01T19:38:32.374881",
     "globalStats": {
-        "currentAMP": "2234",
-        "daysSinceLaunch": "163",
+        "currentAMP": "2233",
+        "daysSinceLaunch": "164",
         "totalBurnedXEN": "351787775900004508264732571011454",
         "totalMintedXBURN": "236895819563058388660432789",
-        "ampDecayDaysLeft": "2233"
+        "ampDecayDaysLeft": "2232"
     },
     "burnMetrics": {
         "total_burned": "351787775900004508264732571011454",
@@ -35,5 +35,5 @@
             "error": null
         }
     },
-    "lastUpdated": 1759346239
+    "lastUpdated": 1759347512
 }
