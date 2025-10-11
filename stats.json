@@ -1,7 +1,11 @@
 {
-    "timestamp": "2025-10-11T11:52:28.387187",
+    "timestamp": "2025-10-11T12:39:22.306245",
     "globalStats": {
-        "error": "Failed to retrieve global stats: {'message': 'no response', 'code': -32603}"
+        "currentAMP": "2224",
+        "daysSinceLaunch": "173",
+        "totalBurnedXEN": "376648189255295262149749700606705",
+        "totalMintedXBURN": "261728378372120619381546902",
+        "ampDecayDaysLeft": "2223"
     },
     "burnMetrics": {
         "total_burned": "376648189255295262149749700606705",
@@ -25,11 +29,11 @@
             "error": null
         },
         "cbxen": {
-            "total_supply": "667308859752259853085924776270742",
-            "total_supply_formatted": "667308859752259.9",
+            "total_supply": "667340171847123960893644776270742",
+            "total_supply_formatted": "667340171847124.0",
             "decimals": "18",
             "error": null
         }
     },
-    "lastUpdated": 1760183548
+    "lastUpdated": 1760186362
 }
