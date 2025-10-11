@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-10-11T10:51:58.596416",
+    "timestamp": "2025-10-11T11:15:54.493591",
     "globalStats": {
         "currentAMP": "2224",
         "daysSinceLaunch": "173",
@@ -19,7 +19,8 @@
         }
     },
     "nftAnalytics": {
-        "total_supply": "176"
+        "total_supply": "Error",
+        "error": "{'message': 'no response', 'code': -32603}"
     },
     "tokenSupply": {
         "xburn": {
@@ -35,5 +36,5 @@
             "error": null
         }
     },
-    "lastUpdated": 1760179918
+    "lastUpdated": 1760181354
 }
