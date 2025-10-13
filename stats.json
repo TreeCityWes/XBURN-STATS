@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-10-13T16:27:51.403832",
+    "timestamp": "2025-10-13T16:48:34.932950",
     "globalStats": {
         "currentAMP": "2222",
         "daysSinceLaunch": "175",
@@ -19,14 +19,15 @@
         }
     },
     "nftAnalytics": {
-        "total_supply": "176"
+        "total_supply": "Error",
+        "error": "{'message': 'no response', 'code': -32603}"
     },
     "tokenSupply": {
         "xburn": {
-            "total_supply": "167796046146230663903336847",
-            "total_supply_formatted": "167796046.14623067",
+            "total_supply": "Error",
+            "total_supply_formatted": "Error",
             "decimals": "18",
-            "error": null
+            "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
         },
         "cbxen": {
             "total_supply": "634721571244896977919552510645742",
@@ -35,5 +36,5 @@
             "error": null
         }
     },
-    "lastUpdated": 1760372871
+    "lastUpdated": 1760374114
 }
