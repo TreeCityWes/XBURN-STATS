@@ -1,11 +1,11 @@
 {
-    "timestamp": "2025-10-23T18:55:51.321118",
+    "timestamp": "2025-10-23T19:19:00.609961",
     "globalStats": {
-        "currentAMP": "2212",
-        "daysSinceLaunch": "185",
+        "currentAMP": "2211",
+        "daysSinceLaunch": "186",
         "totalBurnedXEN": "376648189255295262149749700606705",
         "totalMintedXBURN": "261728378372120619381546902",
-        "ampDecayDaysLeft": "2211"
+        "ampDecayDaysLeft": "2210"
     },
     "burnMetrics": {
         "total_burned": "376648189255295262149749700606705",
@@ -29,11 +29,11 @@
             "error": null
         },
         "cbxen": {
-            "total_supply": "719298408395640892836862510645742",
-            "total_supply_formatted": "719298408395640.9",
+            "total_supply": "718954828353934383761782510645742",
+            "total_supply_formatted": "718954828353934.4",
             "decimals": "18",
             "error": null
         }
     },
-    "lastUpdated": 1761245751
+    "lastUpdated": 1761247140
 }
