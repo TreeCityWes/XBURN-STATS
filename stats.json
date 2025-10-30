@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-10-30T17:24:02.313258",
+    "timestamp": "2025-10-30T17:42:30.826754",
     "globalStats": {
         "currentAMP": "2205",
         "daysSinceLaunch": "192",
@@ -35,5 +35,5 @@
             "error": null
         }
     },
-    "lastUpdated": 1761845042
+    "lastUpdated": 1761846150
 }
