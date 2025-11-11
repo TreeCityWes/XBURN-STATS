@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-11-11T05:55:06.301259",
+    "timestamp": "2025-11-11T06:34:49.432753",
     "globalStats": {
         "currentAMP": "2193",
         "daysSinceLaunch": "204",
@@ -9,8 +9,7 @@
     },
     "burnMetrics": {
         "total_burned": "376648189255295262149749700606705",
-        "burn_rank": "Error",
-        "error": "{'message': 'no response', 'code': -32603}"
+        "burn_rank": "1743"
     },
     "swapAnalytics": {
         "accumulation": {
@@ -36,5 +35,5 @@
             "error": null
         }
     },
-    "lastUpdated": 1762840506
+    "lastUpdated": 1762842889
 }
