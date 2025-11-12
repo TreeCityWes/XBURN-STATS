@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-11-12T12:49:59.989055",
+    "timestamp": "2025-11-12T13:35:19.227417",
     "globalStats": {
         "error": "Failed to retrieve global stats: {'message': 'no response', 'code': -32603}"
     },
@@ -25,11 +25,11 @@
             "error": null
         },
         "cbxen": {
-            "total_supply": "752878995930756782849252510645742",
-            "total_supply_formatted": "752878995930756.8",
+            "total_supply": "758512974821546881049252510645742",
+            "total_supply_formatted": "758512974821546.9",
             "decimals": "18",
             "error": null
         }
     },
-    "lastUpdated": 1762951799
+    "lastUpdated": 1762954519
 }
