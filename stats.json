@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-11-20T10:28:31.547183",
+    "timestamp": "2025-11-20T10:47:13.094270",
     "globalStats": {
         "currentAMP": "2184",
         "daysSinceLaunch": "213",
@@ -29,11 +29,11 @@
             "error": null
         },
         "cbxen": {
-            "total_supply": "870423021992106032823539640021829",
-            "total_supply_formatted": "870423021992106.0",
+            "total_supply": "Error",
+            "total_supply_formatted": "Error",
             "decimals": "18",
-            "error": null
+            "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
         }
     },
-    "lastUpdated": 1763634511
+    "lastUpdated": 1763635633
 }
