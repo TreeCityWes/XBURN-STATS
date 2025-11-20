@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-11-20T22:41:02.488503",
+    "timestamp": "2025-11-20T22:52:51.490544",
     "globalStats": {
         "currentAMP": "2183",
         "daysSinceLaunch": "214",
@@ -36,5 +36,5 @@
             "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
         }
     },
-    "lastUpdated": 1763678462
+    "lastUpdated": 1763679171
 }
