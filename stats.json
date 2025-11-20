@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-11-20T19:23:06.213381",
+    "timestamp": "2025-11-20T19:38:52.152111",
     "globalStats": {
         "currentAMP": "2183",
         "daysSinceLaunch": "214",
@@ -19,7 +19,8 @@
         }
     },
     "nftAnalytics": {
-        "error": "NFT contract not available (Address: Error)"
+        "total_supply": "Error",
+        "error": "{'message': 'no response', 'code': -32603}"
     },
     "tokenSupply": {
         "xburn": {
@@ -29,11 +30,11 @@
             "error": null
         },
         "cbxen": {
-            "total_supply": "Error",
-            "total_supply_formatted": "Error",
+            "total_supply": "869706590234087411862579640021829",
+            "total_supply_formatted": "869706590234087.4",
             "decimals": "18",
-            "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
+            "error": null
         }
     },
-    "lastUpdated": 1763666586
+    "lastUpdated": 1763667532
 }
