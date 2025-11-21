@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-11-21T16:28:21.114007",
+    "timestamp": "2025-11-21T16:47:54.811401",
     "globalStats": {
         "currentAMP": "2183",
         "daysSinceLaunch": "214",
@@ -19,7 +19,7 @@
         }
     },
     "nftAnalytics": {
-        "total_supply": "175"
+        "error": "NFT contract not available (Address: Error)"
     },
     "tokenSupply": {
         "xburn": {
@@ -35,5 +35,5 @@
             "error": null
         }
     },
-    "lastUpdated": 1763742501
+    "lastUpdated": 1763743674
 }
