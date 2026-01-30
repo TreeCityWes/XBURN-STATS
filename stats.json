@@ -1,11 +1,7 @@
 {
-    "timestamp": "2026-01-30T16:17:50.067525",
+    "timestamp": "2026-01-30T17:09:36.221277",
     "globalStats": {
-        "currentAMP": "2157",
-        "daysSinceLaunch": "240",
-        "totalBurnedXEN": "459028013981582679078734769637720",
-        "totalMintedXBURN": "344294983946882300732841897",
-        "ampDecayDaysLeft": "2156"
+        "error": "Failed to retrieve global stats: 502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
     },
     "burnMetrics": {
         "total_burned": "459028013981582679078734769637720",
@@ -13,27 +9,26 @@
     },
     "swapAnalytics": {
         "accumulation": {
-            "current_pending_xen": "20000000000000000000000000000",
-            "threshold": "500000000000000000000000000",
-            "progress_percentage": 4000.0
-        }
+            "error": "Not calculated"
+        },
+        "error": "502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
     },
     "nftAnalytics": {
         "total_supply": "143"
     },
     "tokenSupply": {
         "xburn": {
-            "total_supply": "226176297325588915707485569",
-            "total_supply_formatted": "226176297.3255889",
+            "total_supply": "Error",
+            "total_supply_formatted": "Error",
             "decimals": "18",
-            "error": null
+            "error": "totalSupply call failed: 502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
         },
         "cbxen": {
-            "total_supply": "1111851015949715055985228609778835",
-            "total_supply_formatted": "1111851015949715.0",
+            "total_supply": "Error",
+            "total_supply_formatted": "Error",
             "decimals": "18",
-            "error": null
+            "error": "totalSupply call failed: 502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
         }
     },
-    "lastUpdated": 1769789870
+    "lastUpdated": 1769792976
 }
