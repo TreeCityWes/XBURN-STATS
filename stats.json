@@ -1,21 +1,21 @@
 {
-    "timestamp": "2026-01-31T21:56:40.600497",
+    "timestamp": "2026-01-31T22:33:32.685067",
     "globalStats": {
         "error": "Failed to retrieve global stats: 502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
     },
     "burnMetrics": {
-        "total_burned": "459628013981582679078734769637720",
-        "burn_rank": "1769"
+        "total_burned": "Error",
+        "burn_rank": "Error",
+        "error": "502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
     },
     "swapAnalytics": {
         "accumulation": {
             "error": "Not calculated"
         },
-        "error": "502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
+        "error": "{'message': 'no response', 'code': -32603}"
     },
     "nftAnalytics": {
-        "total_supply": "Error",
-        "error": "502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
+        "error": "NFT contract not available (Address: Error)"
     },
     "tokenSupply": {
         "xburn": {
@@ -25,11 +25,11 @@
             "error": "totalSupply call failed: 502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
         },
         "cbxen": {
-            "total_supply": "1124701977521827564760958609778835",
-            "total_supply_formatted": "1124701977521827.6",
+            "total_supply": "Error",
+            "total_supply_formatted": "Error",
             "decimals": "18",
-            "error": null
+            "error": "totalSupply call failed: 502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
         }
     },
-    "lastUpdated": 1769896600
+    "lastUpdated": 1769898812
 }
