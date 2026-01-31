@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-01-31T19:10:34.292706",
+    "timestamp": "2026-01-31T19:36:15.641990",
     "globalStats": {
         "error": "Failed to retrieve global stats: 502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
     },
@@ -31,5 +31,5 @@
             "error": "totalSupply call failed: 502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
         }
     },
-    "lastUpdated": 1769886634
+    "lastUpdated": 1769888175
 }
