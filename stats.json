@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-02-01T17:44:09.084475",
+    "timestamp": "2026-02-01T18:03:53.332298",
     "globalStats": {
         "currentAMP": "2111",
         "daysSinceLaunch": "286",
@@ -8,8 +8,9 @@
         "ampDecayDaysLeft": "2110"
     },
     "burnMetrics": {
-        "total_burned": "459628013981582679078734769637720",
-        "burn_rank": "1769"
+        "total_burned": "Error",
+        "burn_rank": "Error",
+        "error": "502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
     },
     "swapAnalytics": {
         "accumulation": {
@@ -19,7 +20,7 @@
         }
     },
     "nftAnalytics": {
-        "total_supply": "143"
+        "error": "NFT contract not available (Address: Error)"
     },
     "tokenSupply": {
         "xburn": {
@@ -29,11 +30,11 @@
             "error": null
         },
         "cbxen": {
-            "total_supply": "1115973864290789000287368609778835",
-            "total_supply_formatted": "1115973864290789.0",
+            "total_supply": "1115889664273062209526488609778835",
+            "total_supply_formatted": "1115889664273062.2",
             "decimals": "18",
             "error": null
         }
     },
-    "lastUpdated": 1769967849
+    "lastUpdated": 1769969033
 }
