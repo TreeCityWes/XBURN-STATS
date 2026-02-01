@@ -1,39 +1,35 @@
 {
-    "timestamp": "2026-02-01T22:31:10.481589",
+    "timestamp": "2026-02-01T23:00:02.873692",
     "globalStats": {
-        "currentAMP": "2110",
-        "daysSinceLaunch": "287",
-        "totalBurnedXEN": "459628013981582679078734769637720",
-        "totalMintedXBURN": "344894983946882300732841897",
-        "ampDecayDaysLeft": "2109"
+        "error": "Failed to retrieve global stats: 502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
     },
     "burnMetrics": {
-        "total_burned": "459628013981582679078734769637720",
-        "burn_rank": "1769"
+        "total_burned": "Error",
+        "burn_rank": "Error",
+        "error": "502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
     },
     "swapAnalytics": {
         "accumulation": {
-            "current_pending_xen": "20000000000000000000000000000",
-            "threshold": "500000000000000000000000000",
-            "progress_percentage": 4000.0
-        }
+            "error": "Not calculated"
+        },
+        "error": "502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
     },
     "nftAnalytics": {
-        "total_supply": "143"
+        "error": "NFT contract not available (Address: Error)"
     },
     "tokenSupply": {
         "xburn": {
-            "total_supply": "225538809009715859665151989",
-            "total_supply_formatted": "225538809.00971586",
+            "total_supply": "Error",
+            "total_supply_formatted": "Error",
             "decimals": "18",
-            "error": null
+            "error": "totalSupply call failed: 502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
         },
         "cbxen": {
-            "total_supply": "1116003876672887697236638609778835",
-            "total_supply_formatted": "1116003876672887.8",
+            "total_supply": "Error",
+            "total_supply_formatted": "Error",
             "decimals": "18",
-            "error": null
+            "error": "totalSupply call failed: 502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
         }
     },
-    "lastUpdated": 1769985070
+    "lastUpdated": 1769986802
 }
