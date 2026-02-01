@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-02-01T07:56:07.443349",
+    "timestamp": "2026-02-01T08:37:19.244834",
     "globalStats": {
         "currentAMP": "2111",
         "daysSinceLaunch": "286",
@@ -19,8 +19,7 @@
         }
     },
     "nftAnalytics": {
-        "total_supply": "Error",
-        "error": "502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
+        "total_supply": "143"
     },
     "tokenSupply": {
         "xburn": {
@@ -30,11 +29,11 @@
             "error": null
         },
         "cbxen": {
-            "total_supply": "1115889664273062209526488609778835",
-            "total_supply_formatted": "1115889664273062.2",
+            "total_supply": "1115922924436545209526488609778835",
+            "total_supply_formatted": "1115922924436545.2",
             "decimals": "18",
             "error": null
         }
     },
-    "lastUpdated": 1769932567
+    "lastUpdated": 1769935039
 }
