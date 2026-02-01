@@ -1,7 +1,7 @@
 {
-    "timestamp": "2026-01-31T23:27:24.057144",
+    "timestamp": "2026-02-01T00:03:28.901250",
     "globalStats": {
-        "error": "Failed to retrieve global stats: 502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
+        "error": "Failed to retrieve global stats: {'message': 'no response', 'code': -32603}"
     },
     "burnMetrics": {
         "total_burned": "Error",
@@ -19,17 +19,17 @@
     },
     "tokenSupply": {
         "xburn": {
-            "total_supply": "Error",
-            "total_supply_formatted": "Error",
+            "total_supply": "225538809009715859665151989",
+            "total_supply_formatted": "225538809.00971586",
             "decimals": "18",
-            "error": "totalSupply call failed: 502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
+            "error": null
         },
         "cbxen": {
-            "total_supply": "Error",
-            "total_supply_formatted": "Error",
+            "total_supply": "1124697418829202546268558609778835",
+            "total_supply_formatted": "1124697418829202.5",
             "decimals": "18",
-            "error": "totalSupply call failed: 502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
+            "error": null
         }
     },
-    "lastUpdated": 1769902044
+    "lastUpdated": 1769904208
 }
