@@ -1,35 +1,39 @@
 {
-    "timestamp": "2026-02-02T07:31:35.444342",
+    "timestamp": "2026-02-02T08:03:44.189266",
     "globalStats": {
-        "error": "Failed to retrieve global stats: 502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
+        "currentAMP": "2110",
+        "daysSinceLaunch": "287",
+        "totalBurnedXEN": "459628013981582679078734769637720",
+        "totalMintedXBURN": "344894983946882300732841897",
+        "ampDecayDaysLeft": "2109"
     },
     "burnMetrics": {
-        "total_burned": "Error",
-        "burn_rank": "Error",
-        "error": "502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
+        "total_burned": "459628013981582679078734769637720",
+        "burn_rank": "1769"
     },
     "swapAnalytics": {
         "accumulation": {
-            "error": "Not calculated"
-        },
-        "error": "502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
+            "current_pending_xen": "20000000000000000000000000000",
+            "threshold": "500000000000000000000000000",
+            "progress_percentage": 4000.0
+        }
     },
     "nftAnalytics": {
-        "error": "NFT contract not available (Address: Error)"
+        "total_supply": "143"
     },
     "tokenSupply": {
         "xburn": {
-            "total_supply": "Error",
-            "total_supply_formatted": "Error",
+            "total_supply": "225538809009715859665151989",
+            "total_supply_formatted": "225538809.00971586",
             "decimals": "18",
-            "error": "totalSupply call failed: 502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
+            "error": null
         },
         "cbxen": {
-            "total_supply": "Error",
-            "total_supply_formatted": "Error",
+            "total_supply": "1117368953785449927335978609778835",
+            "total_supply_formatted": "1117368953785449.9",
             "decimals": "18",
-            "error": "totalSupply call failed: 502 Server Error: Bad Gateway for url: https://base.llamarpc.com/"
+            "error": null
         }
     },
-    "lastUpdated": 1770017495
+    "lastUpdated": 1770019424
 }
