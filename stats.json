@@ -1,7 +1,11 @@
 {
-    "timestamp": "2026-02-14T13:00:52.411570",
+    "timestamp": "2026-02-14T13:52:10.451876",
     "globalStats": {
-        "error": "Failed to retrieve global stats: {'message': 'no response', 'code': -32603}"
+        "currentAMP": "2111",
+        "daysSinceLaunch": "286",
+        "totalBurnedXEN": "459628013981582679078734769637720",
+        "totalMintedXBURN": "344894983946882300732841897",
+        "ampDecayDaysLeft": "2110"
     },
     "burnMetrics": {
         "total_burned": "Error",
@@ -10,9 +14,10 @@
     },
     "swapAnalytics": {
         "accumulation": {
-            "error": "Not calculated"
-        },
-        "error": "{'message': 'no response', 'code': -32603}"
+            "current_pending_xen": "0",
+            "threshold": "500000000000000000000000000",
+            "progress_percentage": 0.0
+        }
     },
     "nftAnalytics": {
         "error": "NFT contract not available (Address: Error)"
@@ -31,5 +36,5 @@
             "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
         }
     },
-    "lastUpdated": 1771074052
+    "lastUpdated": 1771077130
 }
