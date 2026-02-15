@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-02-15T10:32:40.251595",
+    "timestamp": "2026-02-15T11:03:17.175493",
     "globalStats": {
         "error": "Failed to retrieve global stats: {'message': 'no response', 'code': -32603}"
     },
@@ -25,11 +25,11 @@
             "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
         },
         "cbxen": {
-            "total_supply": "1351488514247276672146968609778835",
-            "total_supply_formatted": "1351488514247276.8",
+            "total_supply": "Error",
+            "total_supply_formatted": "Error",
             "decimals": "18",
-            "error": null
+            "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
         }
     },
-    "lastUpdated": 1771151560
+    "lastUpdated": 1771153397
 }
