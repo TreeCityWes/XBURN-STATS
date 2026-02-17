@@ -1,7 +1,11 @@
 {
-    "timestamp": "2026-02-17T02:54:20.712804",
+    "timestamp": "2026-02-17T04:56:00.682133",
     "globalStats": {
-        "error": "Failed to retrieve global stats: {'message': 'no response', 'code': -32603}"
+        "currentAMP": "2097",
+        "daysSinceLaunch": "300",
+        "totalBurnedXEN": "459628013981582679078734769637720",
+        "totalMintedXBURN": "344894983946882300732841897",
+        "ampDecayDaysLeft": "2096"
     },
     "burnMetrics": {
         "total_burned": "459628013981582679078734769637720",
@@ -9,9 +13,10 @@
     },
     "swapAnalytics": {
         "accumulation": {
-            "error": "Not calculated"
-        },
-        "error": "{'message': 'no response', 'code': -32603}"
+            "current_pending_xen": "0",
+            "threshold": "500000000000000000000000000",
+            "progress_percentage": 0.0
+        }
     },
     "nftAnalytics": {
         "total_supply": "143"
@@ -30,5 +35,5 @@
             "error": null
         }
     },
-    "lastUpdated": 1771296860
+    "lastUpdated": 1771304160
 }
