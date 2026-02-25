@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-02-25T18:02:57.933306",
+    "timestamp": "2026-02-25T19:21:24.280972",
     "globalStats": {
         "error": "Failed to retrieve global stats: {'message': 'no response', 'code': -32603}"
     },
@@ -19,17 +19,17 @@
     },
     "tokenSupply": {
         "xburn": {
-            "total_supply": "Error",
-            "total_supply_formatted": "Error",
+            "total_supply": "226568883969747112567699640",
+            "total_supply_formatted": "226568883.96974713",
             "decimals": "18",
-            "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
+            "error": null
         },
         "cbxen": {
-            "total_supply": "Error",
-            "total_supply_formatted": "Error",
+            "total_supply": "1343336727019650609016478609778835",
+            "total_supply_formatted": "1343336727019650.5",
             "decimals": "18",
-            "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
+            "error": null
         }
     },
-    "lastUpdated": 1772042577
+    "lastUpdated": 1772047284
 }
