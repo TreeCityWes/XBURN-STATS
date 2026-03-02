@@ -1,35 +1,39 @@
 {
-    "timestamp": "2026-03-02T20:05:48.480738",
+    "timestamp": "2026-03-02T20:51:54.584559",
     "globalStats": {
-        "error": "Failed to retrieve global stats: {'message': 'no response', 'code': -32603}"
+        "currentAMP": "2081",
+        "daysSinceLaunch": "316",
+        "totalBurnedXEN": "465894143291464693094905440779434",
+        "totalMintedXBURN": "351161113256764314749012568",
+        "ampDecayDaysLeft": "2080"
     },
     "burnMetrics": {
-        "total_burned": "Error",
-        "burn_rank": "Error",
-        "error": "{'message': 'no response', 'code': -32603}"
+        "total_burned": "465894143291464693094905440779434",
+        "burn_rank": "1772"
     },
     "swapAnalytics": {
         "accumulation": {
-            "error": "Not calculated"
-        },
-        "error": "{'message': 'no response', 'code': -32603}"
+            "current_pending_xen": "0",
+            "threshold": "500000000000000000000000000",
+            "progress_percentage": 0.0
+        }
     },
     "nftAnalytics": {
-        "error": "NFT contract not available (Address: Error)"
+        "total_supply": "143"
     },
     "tokenSupply": {
         "xburn": {
-            "total_supply": "Error",
-            "total_supply_formatted": "Error",
+            "total_supply": "228114537541947219235822133",
+            "total_supply_formatted": "228114537.54194722",
             "decimals": "18",
-            "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
+            "error": null
         },
         "cbxen": {
-            "total_supply": "1348268909983909612663972072865463",
-            "total_supply_formatted": "1348268909983909.5",
+            "total_supply": "1348167061955630825557672072865463",
+            "total_supply_formatted": "1348167061955630.8",
             "decimals": "18",
             "error": null
         }
     },
-    "lastUpdated": 1772481948
+    "lastUpdated": 1772484714
 }
