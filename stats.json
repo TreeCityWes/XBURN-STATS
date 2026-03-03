@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-03-03T15:08:24.381748",
+    "timestamp": "2026-03-03T16:02:38.615942",
     "globalStats": {
         "currentAMP": "2081",
         "daysSinceLaunch": "316",
@@ -29,11 +29,11 @@
             "error": null
         },
         "cbxen": {
-            "total_supply": "Error",
-            "total_supply_formatted": "Error",
+            "total_supply": "1351236555148661599009882072865463",
+            "total_supply_formatted": "1351236555148661.5",
             "decimals": "18",
-            "error": "totalSupply call failed: 520 Server Error: <none> for url: https://base.llamarpc.com/"
+            "error": null
         }
     },
-    "lastUpdated": 1772550504
+    "lastUpdated": 1772553758
 }
