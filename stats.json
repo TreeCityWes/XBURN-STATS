@@ -1,39 +1,36 @@
 {
-    "timestamp": "2026-03-03T13:06:12.994719",
+    "timestamp": "2026-03-03T14:06:17.130455",
     "globalStats": {
-        "currentAMP": "2081",
-        "daysSinceLaunch": "316",
-        "totalBurnedXEN": "465894143291464693094905440779434",
-        "totalMintedXBURN": "351161113256764314749012568",
-        "ampDecayDaysLeft": "2080"
+        "error": "Failed to retrieve global stats: 503 Server Error: Service Unavailable for url: https://base.llamarpc.com/"
     },
     "burnMetrics": {
-        "total_burned": "465894143291464693094905440779434",
-        "burn_rank": "1772"
+        "total_burned": "Error",
+        "burn_rank": "Error",
+        "error": "503 Server Error: Service Unavailable for url: https://base.llamarpc.com/"
     },
     "swapAnalytics": {
         "accumulation": {
-            "current_pending_xen": "0",
-            "threshold": "500000000000000000000000000",
-            "progress_percentage": 0.0
-        }
+            "error": "Not calculated"
+        },
+        "error": "503 Server Error: Service Unavailable for url: https://base.llamarpc.com/"
     },
     "nftAnalytics": {
-        "total_supply": "143"
+        "total_supply": "Error",
+        "error": "503 Server Error: Service Unavailable for url: https://base.llamarpc.com/"
     },
     "tokenSupply": {
         "xburn": {
-            "total_supply": "228114537541947219235822133",
-            "total_supply_formatted": "228114537.54194722",
+            "total_supply": "Error",
+            "total_supply_formatted": "Error",
             "decimals": "18",
-            "error": null
+            "error": "totalSupply call failed: 503 Server Error: Service Unavailable for url: https://base.llamarpc.com/"
         },
         "cbxen": {
-            "total_supply": "1350255876084782599009882072865463",
-            "total_supply_formatted": "1350255876084782.5",
+            "total_supply": "Error",
+            "total_supply_formatted": "Error",
             "decimals": "18",
-            "error": null
+            "error": "totalSupply call failed: 503 Server Error: Service Unavailable for url: https://base.llamarpc.com/"
         }
     },
-    "lastUpdated": 1772543172
+    "lastUpdated": 1772546777
 }
