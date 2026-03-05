@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-03-05T15:06:56.708153",
+    "timestamp": "2026-03-05T16:05:50.231264",
     "globalStats": {
         "currentAMP": "2079",
         "daysSinceLaunch": "318",
@@ -13,10 +13,9 @@
     },
     "swapAnalytics": {
         "accumulation": {
-            "current_pending_xen": "0",
-            "threshold": "500000000000000000000000000",
-            "progress_percentage": 0.0
-        }
+            "error": "Not calculated"
+        },
+        "error": "{'message': 'no response', 'code': -32603}"
     },
     "nftAnalytics": {
         "total_supply": "143"
@@ -35,5 +34,5 @@
             "error": null
         }
     },
-    "lastUpdated": 1772723216
+    "lastUpdated": 1772726750
 }
