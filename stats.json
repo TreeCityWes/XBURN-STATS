@@ -1,11 +1,16 @@
 {
-    "timestamp": "2026-03-12T13:11:18.943872",
+    "timestamp": "2026-03-12T14:11:02.371973",
     "globalStats": {
-        "error": "Failed to retrieve global stats: {'message': 'no response', 'code': -32603}"
+        "currentAMP": "2072",
+        "daysSinceLaunch": "325",
+        "totalBurnedXEN": "465894143291464693094905440779434",
+        "totalMintedXBURN": "351161113256764314749012568",
+        "ampDecayDaysLeft": "2071"
     },
     "burnMetrics": {
         "total_burned": "465894143291464693094905440779434",
-        "burn_rank": "1772"
+        "burn_rank": "Error",
+        "error": "{'message': 'no response', 'code': -32603}"
     },
     "swapAnalytics": {
         "accumulation": {
@@ -18,17 +23,17 @@
     },
     "tokenSupply": {
         "xburn": {
-            "total_supply": "Error",
-            "total_supply_formatted": "Error",
+            "total_supply": "228114537541947219235822133",
+            "total_supply_formatted": "228114537.54194722",
             "decimals": "18",
-            "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
+            "error": null
         },
         "cbxen": {
-            "total_supply": "Error",
-            "total_supply_formatted": "Error",
+            "total_supply": "1382711812762878637811312072865463",
+            "total_supply_formatted": "1382711812762878.8",
             "decimals": "18",
-            "error": "totalSupply call failed: {'message': 'no response', 'code': -32603}"
+            "error": null
         }
     },
-    "lastUpdated": 1773321078
+    "lastUpdated": 1773324662
 }
