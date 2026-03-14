@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-03-14T15:43:35.737138",
+    "timestamp": "2026-03-14T16:01:09.799988",
     "globalStats": {
         "currentAMP": "2070",
         "daysSinceLaunch": "327",
@@ -19,7 +19,7 @@
         }
     },
     "nftAnalytics": {
-        "total_supply": "143"
+        "error": "NFT contract not available (Address: Error)"
     },
     "tokenSupply": {
         "xburn": {
@@ -29,11 +29,11 @@
             "error": null
         },
         "cbxen": {
-            "total_supply": "1382394231168225983713322072865463",
-            "total_supply_formatted": "1382394231168226.0",
+            "total_supply": "1382705051023873983713322072865463",
+            "total_supply_formatted": "1382705051023874.0",
             "decimals": "18",
             "error": null
         }
     },
-    "lastUpdated": 1773503015
+    "lastUpdated": 1773504069
 }
